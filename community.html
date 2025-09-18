@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>커뮤니티 - 시골친구</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Pretendard:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="styles.css" rel="stylesheet" />
+    <style>
+      /* 커뮤니티 전용 스타일 */
+      .community-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem 4rem;
+      }
+
+      /* 카테고리 원형 버튼 */
+      .category-circles {
+        display: flex !important;
+        justify-content: center;
+        gap: 0.75rem;
+        overflow-x: auto;
+        padding: 1rem 0 2rem;
+        margin-bottom: 1rem;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .category-circles::-webkit-scrollbar {
+        display: none;
+      }
+
+      .category-circle {
+        flex-shrink: 0 !important;
+        width: 80px !important;
+        height: 80px !important;
+        border-radius: 50% !important;
+        background: white !important;
+        border: 2px solid #1a7f3e !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: #1a7f3e !important;
+        text-decoration: none !important;
+        transition: all 0.3s ease !important;
+        position: relative !important;
+        overflow: hidden !important;
+        padding: 0.5rem !important;
+        gap: 0.2rem !important;
+        box-shadow: 0 2px 8px rgba(26, 127, 62, 0.1) !important;
+      }
+
+      .category-circle:hover {
+        transform: scale(1.05);
+        color: white !important;
+        background: #1a7f3e !important;
+        border-color: #1a7f3e !important;
+        box-shadow: 0 4px 15px rgba(26, 127, 62, 0.3);
+      }
+
+      .category-icon {
+        font-size: 1.4rem !important;
+        line-height: 1 !important;
+        color: #1a7f3e !important;
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transition: color 0.3s ease !important;
+      }
+
+      .category-text {
+        font-size: 0.65rem !important;
+        font-weight: 600 !important;
+        line-height: 1 !important;
+        text-align: center !important;
+        white-space: nowrap !important;
+        color: #1a7f3e !important;
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transition: color 0.3s ease !important;
+      }
+
+      .category-circle:hover .category-icon,
+      .category-circle:hover .category-text {
+        color: white !important;
+      }
+
+      .category-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* 카테고리 버튼 강제 표시 */
+      .category-circles .category-circle {
+        visibility: visible !important;
+        opacity: 1 !important;
+        display: flex !important;
+      }
+
+      /* 마제트리 그리드 */
+      .masonry-grid {
+        column-count: 4;
+        column-gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .post-card {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        transition: var(--transition-base);
+        cursor: pointer;
+        position: relative;
+      }
+
+      .post-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-color);
+      }
+
+      .post-image {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
+      }
+
+      .post-content {
+        padding: 1rem;
+      }
+
+      .post-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--gray-800);
+        line-height: 1.4;
+        margin-bottom: 0.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .post-author {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .author-avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .author-name {
+        font-size: 0.8rem;
+        color: var(--gray-600);
+        font-weight: 500;
+      }
+
+      .post-stats {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: var(--gray-500);
+      }
+
+      .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .bookmark-btn {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--gray-600);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: var(--transition-base);
+        opacity: 0;
+      }
+
+      .post-card:hover .bookmark-btn {
+        opacity: 1;
+      }
+
+      .bookmark-btn:hover {
+        background: white;
+        color: var(--primary-color);
+        transform: scale(1.1);
+      }
+
+      .bookmark-btn.bookmarked {
+        color: var(--primary-color);
+        background: rgba(26, 127, 62, 0.1);
+      }
+
+      /* 특별 포스트 스타일 */
+      .post-card.featured {
+        background: var(--gradient-primary);
+        color: white;
+      }
+
+      .post-card.featured .post-title,
+      .post-card.featured .author-name,
+      .post-card.featured .post-stats {
+        color: white;
+      }
+
+      .post-card.featured .bookmark-btn {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+
+      /* 상단 헤더 */
+      .community-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .community-title {
+        font-size: 2rem;
+        font-weight: 800;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+      }
+
+      .community-subtitle {
+        color: var(--gray-600);
+        font-size: 1.1rem;
+        font-weight: 400;
+      }
+
+      /* 반응형 디자인 */
+      @media (max-width: 992px) {
+        .masonry-grid {
+          column-count: 3;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .masonry-grid {
+          column-count: 2;
+          column-gap: 0.75rem;
+        }
+
+        .community-container {
+          padding: 1.5rem 1rem 3rem;
+        }
+
+        .category-circles {
+          justify-content: flex-start;
+          gap: 0.5rem;
+          padding: 0.75rem 0 1.5rem;
+        }
+
+        .category-circle {
+          width: 65px;
+          height: 65px;
+          gap: 0.15rem;
+        }
+
+        .category-icon {
+          font-size: 1.1rem;
+        }
+
+        .category-text {
+          font-size: 0.6rem;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .masonry-grid {
+          column-count: 1;
+        }
+
+        .community-title {
+          font-size: 1.6rem;
+        }
+
+        .community-subtitle {
+          font-size: 1rem;
+        }
+      }
+
+      /* 로딩 애니메이션 */
+      .loading-skeleton {
+        background: linear-gradient(
+          90deg,
+          #f0f0f0 25%,
+          #e0e0e0 50%,
+          #f0f0f0 75%
+        );
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+      }
+
+      @keyframes loading {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      /* 플로팅 버튼 */
+      .floating-write-btn {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--gradient-primary);
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        box-shadow: var(--shadow-color);
+        cursor: pointer;
+        transition: var(--transition-base);
+        z-index: 1000;
+      }
+
+      .floating-write-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 8px 30px rgba(26, 127, 62, 0.4);
+      }
+
+      /* 상단 필터 */
+      .filter-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+      }
+
+      .filter-tab {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        background: var(--gray-100);
+        color: var(--gray-600);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: var(--transition-base);
+        white-space: nowrap;
+        border: 1px solid var(--gray-200);
+      }
+
+      .filter-tab:hover,
+      .filter-tab.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav
+      class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top"
+    >
+      <div class="container">
+        <a class="navbar-brand fw-bold text-primary" href="index.html">
+          <i class="fas fa-seedling me-2"></i>시골친구
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">홈</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="regions.html">지역정보</a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="#"
+                data-bs-toggle="modal"
+                data-bs-target="#matchingModal"
+                >AI매칭</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="community.html">커뮤니티</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="contact.html">문의하기</a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="#"
+                data-bs-toggle="modal"
+                data-bs-target="#applicationModal"
+                >신청하기</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 커뮤니티 컨테이너 -->
+    <div class="community-container">
+      <!-- 헤더 -->
+      <div class="community-header">
+        <h1 class="community-title">농촌생활 스타일</h1>
+        <p class="community-subtitle">
+          시골친구들의 일상과 농촌 경험을 공유해보세요
+        </p>
+      </div>
+
+      <!-- 카테고리 원형 버튼 -->
+      <div class="category-circles">
+        <div class="category-item">
+          <a href="#" class="category-circle" data-category="daily">
+            <i class="fas fa-sun category-icon"></i>
+            <span class="category-text">일상</span>
+          </a>
+        </div>
+        <div class="category-item">
+          <a href="#" class="category-circle" data-category="farming">
+            <i class="fas fa-seedling category-icon"></i>
+            <span class="category-text">농사체험</span>
+          </a>
+        </div>
+        <div class="category-item">
+          <a href="#" class="category-circle" data-category="food">
+            <i class="fas fa-utensils category-icon"></i>
+            <span class="category-text">시골음식</span>
+          </a>
+        </div>
+        <div class="category-item">
+          <a href="#" class="category-circle" data-category="nature">
+            <i class="fas fa-mountain category-icon"></i>
+            <span class="category-text">자연풍경</span>
+          </a>
+        </div>
+        <div class="category-item">
+          <a href="#" class="category-circle" data-category="culture">
+            <i class="fas fa-masks-theater category-icon"></i>
+            <span class="category-text">문화체험</span>
+          </a>
+        </div>
+        <div class="category-item">
+          <a href="#" class="category-circle" data-category="animal">
+            <i class="fas fa-dog category-icon"></i>
+            <span class="category-text">동물친구</span>
+          </a>
+        </div>
+        <div class="category-item">
+          <a href="#" class="category-circle" data-category="season">
+            <i class="fas fa-leaf category-icon"></i>
+            <span class="category-text">계절농사</span>
+          </a>
+        </div>
+        <div class="category-item">
+          <a href="#" class="category-circle" data-category="festival">
+            <i class="fas fa-music category-icon"></i>
+            <span class="category-text">마을축제</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 필터 탭 -->
+      <div class="filter-tabs">
+        <a href="#" class="filter-tab active" data-filter="all">전체</a>
+        <a href="#" class="filter-tab" data-filter="popular">인기</a>
+        <a href="#" class="filter-tab" data-filter="recent">최신</a>
+        <a href="#" class="filter-tab" data-filter="following">팔로잉</a>
+      </div>
+
+      <!-- 마제트리 그리드 -->
+      <div class="masonry-grid" id="postsGrid">
+        <!-- 포스트 카드들이 여기에 동적으로 추가됩니다 -->
+      </div>
+    </div>
+
+    <!-- 플로팅 글쓰기 버튼 -->
+    <button class="floating-write-btn" onclick="openWriteModal()">
+      <i class="fas fa-pen"></i>
+    </button>
+
+    <!-- 포스트 상세 모달 -->
+    <div class="modal fade" id="postDetailModal" tabindex="-1">
+      <!-- 모달 외부 X 닫기 버튼 -->
+      <button
+        type="button"
+        class="btn position-fixed modal-close-btn"
+        data-bs-dismiss="modal"
+        style="
+          top: 1rem;
+          right: 1rem;
+          z-index: 1055;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: none;
+          border: none;
+          color: rgba(255, 255, 255, 0.7);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.1rem;
+        "
+      >
+        <i class="fas fa-times"></i>
+      </button>
+
+      <style>
+        .modal-close-btn:hover {
+          background: none !important;
+          color: rgba(255, 255, 255, 1) !important;
+          transform: none !important;
+        }
+
+        .follow-btn:hover {
+          background-color: #f8f9fa !important;
+          border-color: #6c757d !important;
+          color: #495057 !important;
+        }
+
+        .follow-btn.following {
+          background-color: #1a7f3e !important;
+          border-color: #1a7f3e !important;
+          color: white !important;
+        }
+
+        .follow-btn.following:hover {
+          background-color: #dc3545 !important;
+          border-color: #dc3545 !important;
+          color: white !important;
+        }
+      </style>
+
+      <div class="modal-dialog modal-lg">
+        <div
+          class="modal-content"
+          style="border-radius: 20px; overflow: hidden"
+        >
+          <div class="modal-header border-0 p-0"></div>
+
+          <div class="modal-body p-0">
+            <!-- 상단 유저 정보 -->
+            <div
+              class="d-flex align-items-center justify-content-between p-4 border-bottom"
+            >
+              <div class="d-flex align-items-center">
+                <img
+                  id="modalAuthorAvatar"
+                  src=""
+                  alt=""
+                  class="rounded-circle me-3"
+                  style="width: 40px; height: 40px; object-fit: cover"
+                />
+                <div>
+                  <h6
+                    id="modalAuthorName"
+                    class="mb-0 fw-bold"
+                    style="font-size: 1rem"
+                  ></h6>
+                  <small class="text-muted">농촌유학생</small>
+                </div>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <button
+                  id="followBtn"
+                  class="btn btn-sm follow-btn"
+                  onclick="toggleFollow()"
+                  style="
+                    font-size: 0.85rem;
+                    padding: 0.5rem 1rem;
+                    border-radius: 8px;
+                    background: none;
+                    border: 1px solid #dee2e6;
+                    color: #6c757d;
+                    transition: all 0.2s ease;
+                  "
+                >
+                  팔로우
+                </button>
+                <div class="dropdown">
+                  <button
+                    class="btn btn-link p-0 text-muted"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i class="fas fa-ellipsis-h"></i>
+                  </button>
+                  <ul
+                    class="dropdown-menu dropdown-menu-end"
+                    style="
+                      min-width: 200px;
+                      border-radius: 12px;
+                      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                    "
+                  >
+                    <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center py-3"
+                        href="#"
+                        onclick="sharePost()"
+                      >
+                        <i class="fas fa-share me-3" style="width: 16px"></i>
+                        게시물 공유
+                      </a>
+                    </li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center py-3 text-danger"
+                        href="#"
+                        onclick="blockProfile()"
+                      >
+                        <i class="fas fa-ban me-3" style="width: 16px"></i>
+                        프로필 차단
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        class="dropdown-item d-flex align-items-center py-3 text-danger"
+                        href="#"
+                        onclick="reportProfile()"
+                      >
+                        <i class="fas fa-flag me-3" style="width: 16px"></i>
+                        프로필 신고
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- 메인 이미지 -->
+            <div
+              class="position-relative"
+              style="height: 400px; background: #f8f9fa"
+            >
+              <img
+                id="modalPostImage"
+                src=""
+                alt=""
+                class="w-100 h-100"
+                style="object-fit: cover"
+              />
+
+              <!-- 이미지 인디케이터 -->
+              <div
+                class="position-absolute bottom-0 start-50 translate-middle-x mb-3"
+              >
+                <div class="d-flex gap-2">
+                  <div
+                    class="bg-white rounded-pill"
+                    style="width: 6px; height: 6px"
+                  ></div>
+                  <div
+                    class="bg-white-50 rounded-pill"
+                    style="width: 6px; height: 6px; opacity: 0.5"
+                  ></div>
+                  <div
+                    class="bg-white-50 rounded-pill"
+                    style="width: 6px; height: 6px; opacity: 0.5"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 하단 정보 섹션 -->
+            <div class="bg-white p-4">
+              <!-- 제목과 설명 -->
+              <div class="mb-3">
+                <h5
+                  id="modalPostTitle"
+                  class="mb-2 fw-bold"
+                  style="font-size: 1.1rem"
+                ></h5>
+                <p
+                  id="modalPostDescription"
+                  class="text-muted mb-0"
+                  style="font-size: 0.9rem; line-height: 1.5"
+                ></p>
+              </div>
+
+              <!-- 상품 태그 -->
+              <div class="mb-3" id="productTags">
+                <!-- 농촌 상품들이 여기에 표시됩니다 -->
+              </div>
+
+              <!-- 액션 버튼들 -->
+              <div
+                class="d-flex align-items-center justify-content-between border-top border-bottom py-3 mb-3"
+              >
+                <div class="d-flex align-items-center gap-4">
+                  <button
+                    class="btn btn-link p-0 d-flex align-items-center"
+                    onclick="toggleLike()"
+                    style="color: #dc3545; text-decoration: none"
+                  >
+                    <i class="fas fa-heart me-2"></i>
+                    <span id="modalLikesCount" style="font-size: 0.9rem"
+                      >0</span
+                    >
+                  </button>
+                  <button
+                    class="btn btn-link p-0 d-flex align-items-center text-muted"
+                    style="text-decoration: none"
+                  >
+                    <i class="fas fa-comment me-2"></i>
+                    <span id="modalCommentsCount" style="font-size: 0.9rem"
+                      >0</span
+                    >
+                  </button>
+                  <button
+                    class="btn btn-link p-0 text-muted"
+                    style="text-decoration: none"
+                  >
+                    <i class="fas fa-share me-1"></i>
+                    <span style="font-size: 0.9rem">공유</span>
+                  </button>
+                </div>
+                <button
+                  class="btn btn-link p-0 text-muted"
+                  style="text-decoration: none"
+                >
+                  <i class="fas fa-bookmark me-1"></i>
+                  <span style="font-size: 0.9rem">저장</span>
+                </button>
+              </div>
+
+              <!-- 해시태그 -->
+              <div class="mb-3">
+                <div class="d-flex flex-wrap gap-2" id="hashtagsList">
+                  <!-- 해시태그들이 여기에 표시됩니다 -->
+                </div>
+              </div>
+
+              <!-- 다른 스타일들 -->
+              <div class="mb-3">
+                <div
+                  class="d-flex align-items-center justify-content-between mb-3"
+                >
+                  <h6
+                    class="mb-0 fw-bold"
+                    id="otherStylesTitle"
+                    style="font-size: 0.95rem"
+                  >
+                    @user님의 다른 스타일
+                  </h6>
+                  <small class="text-muted" style="cursor: pointer"
+                    >더보기</small
+                  >
+                </div>
+
+                <div class="row g-2" id="otherStylesGrid">
+                  <!-- 다른 스타일들이 여기에 표시됩니다 -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // 샘플 포스트 데이터
+      const samplePosts = [
+        {
+          id: 1,
+          title: "평창 감자밭에서의 하루",
+          image:
+            "https://images.unsplash.com/photo-1560493676-04071c5f467b?w=400&h=500&fit=crop",
+          author: "농부김철수",
+          avatar:
+            "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face",
+          likes: 142,
+          comments: 23,
+          category: "farming",
+          featured: false,
+        },
+        {
+          id: 2,
+          title: "시골친구 챌린지",
+          image: "",
+          author: "시골친구",
+          avatar:
+            "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face",
+          likes: 1204,
+          comments: 89,
+          category: "challenge",
+          featured: true,
+          description:
+            "농촌 생활의 매력을 널리 알리기 위한 #시골친구 챌린지에 참여해보세요!",
+        },
+        {
+          id: 3,
+          title: "할머니가 알려주신 된장찌개 레시피",
+          image:
+            "https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=600&fit=crop",
+          author: "농촌요리사",
+          avatar:
+            "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=face",
+          likes: 89,
+          comments: 34,
+          category: "food",
+          featured: false,
+        },
+        {
+          id: 4,
+          title: "강원도 산골마을 산책길",
+          image:
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=700&fit=crop",
+          author: "산골소녀",
+          avatar:
+            "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=40&h=40&fit=crop&crop=face",
+          likes: 156,
+          comments: 12,
+          category: "nature",
+          featured: false,
+        },
+        {
+          id: 5,
+          title: "우리 마을 복실이",
+          image:
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=500&fit=crop",
+          author: "동물사랑",
+          avatar:
+            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face",
+          likes: 234,
+          comments: 45,
+          category: "animal",
+          featured: false,
+        },
+        {
+          id: 6,
+          title: "전남 고흥 유자따기 체험",
+          image:
+            "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400&h=600&fit=crop",
+          author: "유자농부",
+          avatar:
+            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face",
+          likes: 98,
+          comments: 19,
+          category: "season",
+          featured: false,
+        },
+        {
+          id: 7,
+          title: "마을 할머니들과 함께한 김장",
+          image:
+            "https://images.unsplash.com/photo-1582731453726-b9bc16d78be9?w=400&h=800&fit=crop",
+          author: "김장단장",
+          avatar:
+            "https://images.unsplash.com/photo-1534308143481-c55c1c71e96e?w=40&h=40&fit=crop&crop=face",
+          likes: 187,
+          comments: 56,
+          category: "culture",
+          featured: false,
+        },
+        {
+          id: 8,
+          title: "전북 정읍 벚꽃축제",
+          image:
+            "https://images.unsplash.com/photo-1522383225653-ed111181a951?w=400&h=500&fit=crop",
+          author: "축제러버",
+          avatar:
+            "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?w=40&h=40&fit=crop&crop=face",
+          likes: 267,
+          comments: 78,
+          category: "festival",
+          featured: false,
+        },
+        {
+          id: 9,
+          title: "아침 일찍 닭들에게 모이 주기",
+          image:
+            "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=400&h=600&fit=crop",
+          author: "새벽농부",
+          avatar:
+            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face",
+          likes: 45,
+          comments: 8,
+          category: "daily",
+          featured: false,
+        },
+        {
+          id: 10,
+          title: "우리 마을 토종벌 관찰일기",
+          image:
+            "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=500&fit=crop",
+          author: "꿀벌지기",
+          avatar:
+            "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face",
+          likes: 78,
+          comments: 15,
+          category: "animal",
+          featured: false,
+        },
+        {
+          id: 11,
+          title: "아침에 일어나 바라본 안개 낀 논",
+          image:
+            "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&h=700&fit=crop",
+          author: "새벽풍경",
+          avatar:
+            "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=face",
+          likes: 234,
+          comments: 32,
+          category: "daily",
+          featured: false,
+        },
+        {
+          id: 12,
+          title: "전통 농기구 체험하기",
+          image:
+            "https://images.unsplash.com/photo-1464822759844-d150baec0493?w=400&h=600&fit=crop",
+          author: "전통농법",
+          avatar:
+            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face",
+          likes: 156,
+          comments: 28,
+          category: "culture",
+          featured: false,
+        },
+      ];
+
+      // 포스트 렌더링 함수
+      function renderPosts(posts = samplePosts) {
+        const grid = document.getElementById("postsGrid");
+        grid.innerHTML = "";
+
+        posts.forEach((post) => {
+          const postElement = createPostElement(post);
+          grid.appendChild(postElement);
+        });
+      }
+
+      // 포스트 요소 생성 함수
+      function createPostElement(post) {
+        const div = document.createElement("div");
+        div.className = `post-card ${post.featured ? "featured" : ""}`;
+        div.onclick = () => openPostDetail(post);
+
+        if (post.featured) {
+          div.innerHTML = `
+                    <div class="post-content" style="padding: 2rem; min-height: 200px; display: flex; flex-direction: column; justify-content: center;">
+                        <div style="text-align: center;">
+                            <i class="fas fa-star" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.8;"></i>
+                            <h3 class="post-title" style="font-size: 1.2rem; margin-bottom: 1rem;">${
+                              post.title
+                            }</h3>
+                            <p style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 1.5rem;">${
+                              post.description || ""
+                            }</p>
+                            <div class="post-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-heart"></i>
+                                    <span>${post.likes}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-comment"></i>
+                                    <span>${post.comments}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="bookmark-btn" onclick="toggleBookmark(event, ${
+                      post.id
+                    })">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                `;
+        } else {
+          div.innerHTML = `
+                    ${
+                      post.image
+                        ? `<img src="${post.image}" alt="${post.title}" class="post-image">`
+                        : ""
+                    }
+                    <div class="post-content">
+                        <div class="post-author">
+                            <img src="${post.avatar}" alt="${
+            post.author
+          }" class="author-avatar">
+                            <span class="author-name">${post.author}</span>
+                        </div>
+                        <h3 class="post-title">${post.title}</h3>
+                        <div class="post-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-heart"></i>
+                                <span>${post.likes}</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-comment"></i>
+                                <span>${post.comments}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="bookmark-btn" onclick="toggleBookmark(event, ${
+                      post.id
+                    })">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                `;
+        }
+
+        return div;
+      }
+
+      // 북마크 토글 함수
+      function toggleBookmark(event, postId) {
+        event.stopPropagation();
+        const btn = event.currentTarget;
+        btn.classList.toggle("bookmarked");
+
+        if (btn.classList.contains("bookmarked")) {
+          showToast("북마크에 추가되었습니다", "success");
+        } else {
+          showToast("북마크에서 제거되었습니다", "info");
+        }
+      }
+
+      // 현재 포스트 데이터
+      let currentPost = null;
+
+      // 포스트 상세 보기
+      function openPostDetail(post) {
+        currentPost = post;
+
+        // 모달 요소들 업데이트
+        document.getElementById("modalPostImage").src =
+          post.image ||
+          "https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800&h=600&fit=crop";
+        document.getElementById("modalAuthorAvatar").src = post.avatar;
+        document.getElementById("modalAuthorName").textContent = post.author;
+        document.getElementById("modalPostTitle").textContent = post.title;
+        document.getElementById("modalPostDescription").textContent =
+          getPostDescription(post);
+        document.getElementById("modalLikesCount").textContent = post.likes;
+        document.getElementById("modalCommentsCount").textContent =
+          post.comments;
+
+        // 다른 스타일 제목 업데이트
+        document.getElementById(
+          "otherStylesTitle"
+        ).textContent = `@${post.author}님의 다른 게시물`;
+
+        // 팔로우 버튼 상태 업데이트
+        updateFollowButtonState(post.author);
+
+        // 상품 태그 로드
+        loadProductTags(post);
+
+        // 다른 스타일들 로드
+        loadOtherStyles(post);
+
+        // 해시태그 로드
+        loadHashtags(post);
+
+        // 모달 열기
+        const modal = new bootstrap.Modal(
+          document.getElementById("postDetailModal")
+        );
+        modal.show();
+      }
+
+      // 상품 태그 로드 (농촌 관련 아이템들)
+      function loadProductTags(post) {
+        const productTags = document.getElementById("productTags");
+        const products = getProductsForPost(post);
+
+        if (products.length === 0) {
+          productTags.innerHTML = "";
+          return;
+        }
+
+        productTags.innerHTML = products
+          .map(
+            (product) => `
+                <div class="d-flex align-items-center p-3 bg-light rounded-3 mb-2" style="cursor: pointer; border: 1px solid #e9ecef;">
+                    <img src="${product.image}" alt="${product.name}" class="me-3" style="width: 44px; height: 44px; object-fit: cover; border-radius: 8px;">
+                    <div class="flex-grow-1">
+                        <div class="fw-bold mb-1" style="font-size: 0.85rem; color: #333;">${product.name}</div>
+                        <div class="fw-bold" style="font-size: 0.8rem; color: #1A7F3E;">${product.price}</div>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: #666; font-size: 0.8rem;"></i>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // 다른 스타일들 로드
+      function loadOtherStyles(post) {
+        const otherStylesGrid = document.getElementById("otherStylesGrid");
+        const otherPosts = samplePosts
+          .filter((p) => p.author === post.author && p.id !== post.id)
+          .slice(0, 4);
+
+        otherStylesGrid.innerHTML = otherPosts
+          .map(
+            (otherPost) => `
+                <div class="col-3">
+                    <div class="position-relative" style="cursor: pointer;" onclick="openPostDetail(${JSON.stringify(
+                      otherPost
+                    ).replace(/"/g, "&quot;")})">
+                        <img src="${otherPost.image}" alt="${
+              otherPost.title
+            }" class="w-100 rounded" style="aspect-ratio: 1; object-fit: cover;">
+                        <div class="position-absolute top-0 start-0 m-2">
+                            <span class="badge bg-dark">${
+                              otherPost.likes
+                            }</span>
+                        </div>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // 해시태그 로드
+      function loadHashtags(post) {
+        const hashtagsList = document.getElementById("hashtagsList");
+        const hashtags = getHashtagsForPost(post);
+
+        hashtagsList.innerHTML = hashtags
+          .map(
+            (tag) => `
+                <span class="badge bg-light text-dark border" style="cursor: pointer;">#${tag}</span>
+            `
+          )
+          .join("");
+      }
+
+      // 포스트별 상품 정보
+      function getProductsForPost(post) {
+        const products = {
+          1: [
+            {
+              name: "평창 감자 1박스",
+              price: "15,000원",
+              image:
+                "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=80&h=80&fit=crop",
+            },
+          ],
+          3: [
+            {
+              name: "전통 된장 500g",
+              price: "12,000원",
+              image:
+                "https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=80&fit=crop",
+            },
+          ],
+          6: [
+            {
+              name: "고흥 유자청 300ml",
+              price: "18,000원",
+              image:
+                "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=80&h=80&fit=crop",
+            },
+          ],
+        };
+        return products[post.id] || [];
+      }
+
+      // 포스트별 해시태그
+      function getHashtagsForPost(post) {
+        const hashtags = {
+          1: ["평창감자", "농사체험", "시골친구", "감자수확"],
+          3: ["전통된장", "할머니레시피", "시골음식", "건강식품"],
+          4: ["강원도", "산골마을", "자연풍경", "힐링"],
+          5: ["동물친구", "복실이", "농촌생활", "반려동물"],
+          6: ["고흥유자", "계절농사", "유자따기", "전남"],
+          7: ["김장", "문화체험", "전통", "마을공동체"],
+          8: ["벚꽃축제", "정읍", "마을축제", "봄"],
+          9: ["일상", "새벽농장", "닭키우기", "농촌일상"],
+          10: ["토종벌", "양봉", "동물친구", "꿀"],
+          11: ["안개낀논", "일상", "농촌풍경", "새벽"],
+          12: ["전통농기구", "문화체험", "농업역사", "체험학습"],
+        };
+        return hashtags[post.id] || ["농촌생활", "시골친구"];
+      }
+
+      // 포스트 설명 생성
+      function getPostDescription(post) {
+        const descriptions = {
+          1: "오늘 평창의 감자밭에서 일하면서 느낀 소중한 경험을 공유합니다. 맑은 공기와 따뜻한 햇살 아래서 직접 기른 감자를 수확하는 기쁨이 정말 특별했어요!",
+          3: "농촌에서 할머니가 직접 알려주신 전통 된장찌개 레시피입니다. 시골에서만 맛볼 수 있는 깊은 맛의 비결을 공개합니다.",
+          4: "강원도 깊은 산골마을의 숨겨진 산책길을 발견했어요. 새소리와 시냇물 소리가 함께하는 힐링 산책코스 추천드립니다.",
+          5: "우리 마을의 귀여운 개 복실이와의 일상을 담았습니다. 농촌에서 만난 동물친구들과의 특별한 우정 이야기예요.",
+          6: "전남 고흥의 유자농장에서 직접 체험한 유자따기! 손으로 직접 따는 유자의 향긋함과 농부님들의 정성을 느낄 수 있었어요.",
+          7: "마을 할머니들과 함께한 김장 담그기 체험. 전통 방식 그대로 담그는 김치의 맛과 정을 나누는 소중한 시간이었습니다.",
+          8: "전북 정읍에서 열린 벚꽃축제에 다녀왔어요. 만개한 벚꽃과 함께하는 농촌 축제의 따뜻함을 느껴보세요.",
+        };
+        return (
+          descriptions[post.id] || "농촌생활의 소중한 순간을 담은 게시물입니다."
+        );
+      }
+
+      // 댓글 데이터
+      const comments = {
+        1: [
+          {
+            author: "농촌사랑",
+            avatar:
+              "https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=40&h=40&fit=crop&crop=face",
+            text: "감자 수확 체험 정말 좋아보여요! 저도 참여하고 싶네요 🥔",
+            time: "2시간 전",
+          },
+          {
+            author: "시골생활",
+            avatar:
+              "https://images.unsplash.com/photo-1488161628813-04466f872be2?w=40&h=40&fit=crop&crop=face",
+            text: "평창 감자 정말 유명하죠! 직접 캐보니 어떠셨나요?",
+            time: "1시간 전",
+          },
+        ],
+        3: [
+          {
+            author: "요리달인",
+            avatar:
+              "https://images.unsplash.com/photo-1528892952291-009c663ce843?w=40&h=40&fit=crop&crop=face",
+            text: "할머니 레시피 최고예요! 꼭 따라해보겠습니다 👵",
+            time: "3시간 전",
+          },
+          {
+            author: "된장사랑",
+            avatar:
+              "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=40&h=40&fit=crop&crop=face",
+            text: "전통 방식으로 만든 된장은 정말 다르죠",
+            time: "2시간 전",
+          },
+        ],
+      };
+
+      // 댓글 로드
+      function loadComments(postId) {
+        const commentsList = document.getElementById("commentsList");
+        const postComments = comments[postId] || [];
+
+        if (postComments.length === 0) {
+          commentsList.innerHTML =
+            '<p class="text-muted text-center py-3">아직 댓글이 없습니다. 첫 번째 댓글을 남겨보세요!</p>';
+          return;
+        }
+
+        commentsList.innerHTML = postComments
+          .map(
+            (comment) => `
+                <div class="d-flex mb-3">
+                    <img src="${comment.avatar}" alt="${comment.author}" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center mb-1">
+                            <strong class="me-2" style="font-size: 0.9rem;">${comment.author}</strong>
+                            <small class="text-muted">${comment.time}</small>
+                        </div>
+                        <p class="mb-0" style="font-size: 0.9rem;">${comment.text}</p>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // 좋아요 토글
+      function toggleLike() {
+        if (!currentPost) return;
+
+        const likesElement = document.getElementById("modalLikesCount");
+        const currentLikes = parseInt(likesElement.textContent);
+        const isLiked = likesElement.parentElement.classList.contains("liked");
+
+        if (isLiked) {
+          likesElement.textContent = currentLikes - 1;
+          likesElement.parentElement.classList.remove("liked");
+          showToast("좋아요를 취소했습니다", "info");
+        } else {
+          likesElement.textContent = currentLikes + 1;
+          likesElement.parentElement.classList.add("liked");
+          showToast("좋아요를 눌렀습니다 ❤️", "success");
+        }
+      }
+
+      // 댓글 추가
+      function addComment() {
+        const input = document.getElementById("commentInput");
+        const text = input.value.trim();
+
+        if (!text) return;
+
+        const commentsList = document.getElementById("commentsList");
+        const newComment = document.createElement("div");
+        newComment.className = "d-flex mb-3";
+        newComment.innerHTML = `
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=40&h=40&fit=crop&crop=face" alt="나" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center mb-1">
+                        <strong class="me-2" style="font-size: 0.9rem;">나</strong>
+                        <small class="text-muted">방금 전</small>
+                    </div>
+                    <p class="mb-0" style="font-size: 0.9rem;">${text}</p>
+                </div>
+            `;
+
+        commentsList.appendChild(newComment);
+        input.value = "";
+
+        // 댓글 수 업데이트
+        const commentsCount = document.getElementById("modalCommentsCount");
+        commentsCount.textContent = parseInt(commentsCount.textContent) + 1;
+
+        showToast("댓글이 등록되었습니다", "success");
+
+        // 스크롤을 맨 아래로
+        commentsList.scrollTop = commentsList.scrollHeight;
+      }
+
+      // 엔터키로 댓글 등록
+      document.addEventListener("DOMContentLoaded", () => {
+        const commentInput = document.getElementById("commentInput");
+        if (commentInput) {
+          commentInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+              addComment();
+            }
+          });
+        }
+      });
+
+      // 글쓰기 모달 (추후 구현)
+      function openWriteModal() {
+        showToast("글쓰기 기능 준비 중입니다", "info");
+      }
+
+      // 게시물 공유
+      function sharePost() {
+        if (!currentPost) return;
+
+        if (navigator.share) {
+          navigator
+            .share({
+              title: currentPost.title,
+              text: `${currentPost.author}님의 농촌 생활 이야기를 확인해보세요!`,
+              url: window.location.href,
+            })
+            .then(() => {
+              showToast("게시물이 공유되었습니다", "success");
+            })
+            .catch(() => {
+              copyToClipboard();
+            });
+        } else {
+          copyToClipboard();
+        }
+      }
+
+      // 클립보드에 링크 복사
+      function copyToClipboard() {
+        const url = window.location.href;
+        navigator.clipboard
+          .writeText(url)
+          .then(() => {
+            showToast("링크가 클립보드에 복사되었습니다", "success");
+          })
+          .catch(() => {
+            showToast("링크 복사에 실패했습니다", "info");
+          });
+      }
+
+      // 프로필 차단
+      function blockProfile() {
+        if (!currentPost) return;
+
+        if (
+          confirm(
+            `${currentPost.author}님을 차단하시겠습니까?\n차단하면 해당 사용자의 게시물을 더 이상 볼 수 없습니다.`
+          )
+        ) {
+          // 실제로는 서버에 차단 요청을 보내야 함
+          showToast(`${currentPost.author}님이 차단되었습니다`, "success");
+
+          // 모달 닫기
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById("postDetailModal")
+          );
+          modal.hide();
+
+          // 차단된 사용자의 포스트들을 화면에서 제거
+          setTimeout(() => {
+            const filteredPosts = samplePosts.filter(
+              (post) => post.author !== currentPost.author
+            );
+            renderPosts(filteredPosts);
+          }, 300);
+        }
+      }
+
+      // 프로필 신고
+      function reportProfile() {
+        if (!currentPost) return;
+
+        const reasons = [
+          "부적절한 콘텐츠",
+          "스팸 또는 광고",
+          "괴롭힘 또는 혐오 발언",
+          "폭력적인 내용",
+          "저작권 침해",
+          "기타",
+        ];
+
+        let reasonsHtml = reasons
+          .map(
+            (reason, index) =>
+              `<label class="d-block mb-2">
+                    <input type="radio" name="reportReason" value="${reason}" class="me-2">
+                    ${reason}
+                </label>`
+          )
+          .join("");
+
+        const reportModal = document.createElement("div");
+        reportModal.className = "modal fade";
+        reportModal.innerHTML = `
+                <div class="modal-dialog">
+                    <div class="modal-content" style="border-radius: 16px;">
+                        <div class="modal-header border-0">
+                            <h5 class="modal-title fw-bold">신고하기</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="text-muted mb-3">${currentPost.author}님을 신고하는 이유를 선택해주세요:</p>
+                            <div id="reportReasons">
+                                ${reasonsHtml}
+                            </div>
+                            <div class="mt-3">
+                                <label class="form-label">추가 설명 (선택사항)</label>
+                                <textarea class="form-control" id="reportDescription" rows="3" placeholder="신고 사유에 대한 자세한 설명을 입력해주세요..."></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+                            <button type="button" class="btn btn-danger" onclick="submitReport()">신고하기</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+        document.body.appendChild(reportModal);
+        const modal = new bootstrap.Modal(reportModal);
+        modal.show();
+
+        // 모달이 닫힐 때 DOM에서 제거
+        reportModal.addEventListener("hidden.bs.modal", () => {
+          document.body.removeChild(reportModal);
+        });
+      }
+
+      // 신고 제출
+      function submitReport() {
+        const selectedReason = document.querySelector(
+          'input[name="reportReason"]:checked'
+        );
+        const description = document.getElementById("reportDescription").value;
+
+        if (!selectedReason) {
+          showToast("신고 사유를 선택해주세요", "info");
+          return;
+        }
+
+        // 실제로는 서버에 신고 데이터를 전송해야 함
+        const reportData = {
+          targetUser: currentPost.author,
+          reason: selectedReason.value,
+          description: description,
+          timestamp: new Date().toISOString(),
+        };
+
+        console.log("신고 데이터:", reportData);
+
+        showToast("신고가 접수되었습니다. 검토 후 조치하겠습니다", "success");
+
+        // 신고 모달 닫기
+        const reportModal = bootstrap.Modal.getInstance(
+          document.querySelector(".modal.show")
+        );
+        reportModal.hide();
+
+        // 포스트 상세 모달도 닫기
+        setTimeout(() => {
+          const postModal = bootstrap.Modal.getInstance(
+            document.getElementById("postDetailModal")
+          );
+          postModal.hide();
+        }, 300);
+      }
+
+      // 팔로우 상태 관리
+      let followingUsers = new Set();
+
+      // 팔로우 토글
+      function toggleFollow() {
+        if (!currentPost) return;
+
+        const followBtn = document.getElementById("followBtn");
+        const isFollowing = followingUsers.has(currentPost.author);
+
+        if (isFollowing) {
+          // 언팔로우
+          followingUsers.delete(currentPost.author);
+          followBtn.textContent = "팔로우";
+          followBtn.classList.remove("following");
+          showToast(`${currentPost.author}님을 언팔로우했습니다`, "info");
+        } else {
+          // 팔로우
+          followingUsers.add(currentPost.author);
+          followBtn.textContent = "팔로잉";
+          followBtn.classList.add("following");
+          showToast(`${currentPost.author}님을 팔로우했습니다`, "success");
+        }
+      }
+
+      // 포스트 상세 열 때 팔로우 상태 초기화
+      function updateFollowButtonState(author) {
+        const followBtn = document.getElementById("followBtn");
+        const isFollowing = followingUsers.has(author);
+
+        if (isFollowing) {
+          followBtn.textContent = "팔로잉";
+          followBtn.classList.add("following");
+        } else {
+          followBtn.textContent = "팔로우";
+          followBtn.classList.remove("following");
+        }
+      }
+
+      // 토스트 알림 함수
+      function showToast(message, type = "success") {
+        const toast = document.createElement("div");
+        toast.className = `toast-notification toast-${type} show`;
+        toast.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-${
+                      type === "success" ? "check-circle" : "info-circle"
+                    }"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+          setTimeout(() => {
+            document.body.removeChild(toast);
+          }, 300);
+        }, 3000);
+      }
+
+      // 카테고리 필터링 함수
+      function filterByCategory(category) {
+        // 모든 카테고리 버튼 비활성화
+        document.querySelectorAll(".category-circle").forEach((b) => {
+          b.style.background = "var(--gradient-primary)";
+          b.style.transform = "scale(1)";
+        });
+
+        // 클릭된 버튼 활성화
+        const clickedBtn = document.querySelector(
+          `[data-category="${category}"]`
+        );
+        if (clickedBtn) {
+          clickedBtn.style.background = "var(--gradient-secondary)";
+          clickedBtn.style.transform = "scale(1.1)";
+        }
+
+        // 포스트 필터링
+        let filteredPosts;
+        if (category === "all") {
+          filteredPosts = samplePosts;
+        } else {
+          filteredPosts = samplePosts.filter(
+            (post) => post.category === category
+          );
+        }
+
+        renderPosts(filteredPosts);
+
+        // 카테고리명 표시
+        const categoryNames = {
+          daily: "일상",
+          farming: "농사체험",
+          food: "시골음식",
+          nature: "자연풍경",
+          culture: "문화체험",
+          animal: "동물친구",
+          season: "계절농사",
+          festival: "마을축제",
+        };
+
+        const categoryName = categoryNames[category] || "전체";
+        showToast(`${categoryName} 카테고리로 필터링했습니다`, "info");
+      }
+
+      // 카테고리 버튼 이벤트 리스너 등록
+      function initCategoryButtons() {
+        document.querySelectorAll(".category-circle").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            const category = btn.dataset.category;
+            filterByCategory(category);
+          });
+        });
+      }
+
+      // 필터 탭 기능
+      document.querySelectorAll(".filter-tab").forEach((tab) => {
+        tab.addEventListener("click", (e) => {
+          e.preventDefault();
+
+          // 모든 탭 비활성화
+          document
+            .querySelectorAll(".filter-tab")
+            .forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+
+          const filter = tab.dataset.filter;
+          let filteredPosts = [...samplePosts];
+
+          switch (filter) {
+            case "popular":
+              filteredPosts.sort((a, b) => b.likes - a.likes);
+              break;
+            case "recent":
+              filteredPosts.reverse();
+              break;
+            case "following":
+              // 팔로잉 필터 로직 (임시)
+              filteredPosts = filteredPosts.slice(0, 4);
+              break;
+            default:
+              break;
+          }
+
+          renderPosts(filteredPosts);
+        });
+      });
+
+      // 초기 렌더링
+      document.addEventListener("DOMContentLoaded", () => {
+        renderPosts();
+        initCategoryButtons();
+      });
+    </script>
+  </body>
+</html>

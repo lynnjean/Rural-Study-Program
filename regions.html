@@ -306,13 +306,15 @@
     <section class="regions-hero">
         <div class="container">
             <h1>농촌유학 지역 정보</h1>
-            <p>전국의 다양한 농촌유학 지역들을 살펴보고 우리 아이에게 맞는 곳을 찾아보세요</p>
         </div>
     </section>
 
     <!-- Search Section -->
     <section class="search-section">
         <div class="container">
+            <div class="text-center mb-4">
+                <p class="lead text-muted">전국의 다양한 농촌유학 지역들을 살펴보고 우리 아이에게 맞는 곳을 찾아보세요</p>
+            </div>
             <div class="search-box">
                 <input type="text" class="search-input" placeholder="지역 이름으로 검색하기" id="searchInput">
             </div>
@@ -331,6 +333,12 @@
                 <span class="filter-tag" data-filter="nature">#치즈마을</span>
                 <span class="filter-tag" data-filter="ecology">#농촌체험</span>
                 <span class="filter-tag" data-filter="character">#산간지역</span>
+                <span class="filter-tag" data-filter="hiking">#등산/트래킹</span>
+                <span class="filter-tag" data-filter="marine">#해양스포츠</span>
+                <span class="filter-tag" data-filter="traditional-culture">#전통문화</span>
+                <span class="filter-tag" data-filter="traditional-arts">#전통예술</span>
+                <span class="filter-tag" data-filter="hanok">#한옥체험</span>
+                <span class="filter-tag" data-filter="crafts">#공예활동</span>
             </div>
         </div>
     </section>
@@ -345,6 +353,7 @@
                 </div>
                 <div class="region-content">
                     <h3 class="region-title">전남 곡성군</h3>
+                    <p class="region-description text-muted mb-3">섬진강이 흐르는 아름다운 농촌 지역으로, 기차마을과 생태체험이 특화된 곳입니다.</p>
                     <div class="region-tags">
                         <span class="region-tag">#생태체험</span>
                         <span class="region-tag">#소규모학교</span>
@@ -360,17 +369,13 @@
                             <span class="stat-value">30만원</span>
                         </div>
                         <div class="stat-row">
-                            <span class="stat-label">주변 환경</span>
-                            <span class="stat-value">특화 프로그램</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">들판/명아</span>
-                            <span class="stat-value">3개</span>
+                            <span class="stat-label">수용인원</span>
+                            <span class="stat-value">20명</span>
                         </div>
                     </div>
                     <div class="region-actions">
                         <button class="btn-detail" onclick="showRegionDetail('전남 곡성군')">자세히 보기</button>
-                        <button class="btn-compare" onclick="compareRegion('전남 곡성군')">비교하기</button>
+                        <button class="btn-compare" onclick="addToWishlist('전남 곡성군')">관심지역 추가</button>
                     </div>
                 </div>
             </div>
@@ -382,6 +387,7 @@
                 </div>
                 <div class="region-content">
                     <h3 class="region-title">강원 평창군</h3>
+                    <p class="region-description text-muted mb-3">올림픽의 고장으로 스포츠와 고원지대의 청정자연을 체험할 수 있습니다.</p>
                     <div class="region-tags">
                         <span class="region-tag">#고원지대</span>
                         <span class="region-tag">#스포츠</span>
@@ -397,17 +403,13 @@
                             <span class="stat-value">35만원</span>
                         </div>
                         <div class="stat-row">
-                            <span class="stat-label">주변 환경</span>
-                            <span class="stat-value">특화 프로그램</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">들판/명아</span>
-                            <span class="stat-value">3개</span>
+                            <span class="stat-label">수용인원</span>
+                            <span class="stat-value">20명</span>
                         </div>
                     </div>
                     <div class="region-actions">
                         <button class="btn-detail" onclick="showRegionDetail('강원 평창군')">자세히 보기</button>
-                        <button class="btn-compare" onclick="compareRegion('강원 평창군')">비교하기</button>
+                        <button class="btn-compare" onclick="addToWishlist('강원 평창군')">관심지역 추가</button>
                     </div>
                 </div>
             </div>
@@ -419,6 +421,7 @@
                 </div>
                 <div class="region-content">
                     <h3 class="region-title">전북 임실군</h3>
+                    <p class="region-description text-muted mb-3">치즈의 고장으로 유명하며, 산간지역의 목축업과 농촌체험이 풍부한 곳입니다.</p>
                     <div class="region-tags">
                         <span class="region-tag">#치즈마을</span>
                         <span class="region-tag">#농촌체험</span>
@@ -434,17 +437,13 @@
                             <span class="stat-value">25만원</span>
                         </div>
                         <div class="stat-row">
-                            <span class="stat-label">주변 환경</span>
-                            <span class="stat-value">특화 프로그램</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">들판/명아</span>
-                            <span class="stat-value">3개</span>
+                            <span class="stat-label">수용인원</span>
+                            <span class="stat-value">20명</span>
                         </div>
                     </div>
                     <div class="region-actions">
                         <button class="btn-detail" onclick="showRegionDetail('전북 임실군')">자세히 보기</button>
-                        <button class="btn-compare" onclick="compareRegion('전북 임실군')">비교하기</button>
+                        <button class="btn-compare" onclick="addToWishlist('전북 임실군')">관심지역 추가</button>
                     </div>
                 </div>
             </div>
@@ -456,6 +455,7 @@
                 </div>
                 <div class="region-content">
                     <h3 class="region-title">경북 영양군</h3>
+                    <p class="region-description text-muted mb-3">청정한 자연환경과 소규모 학교의 특성화 교육이 잘 이루어진 산촌 지역입니다.</p>
                     <div class="region-tags">
                         <span class="region-tag">#생태체험</span>
                         <span class="region-tag">#소규모학교</span>
@@ -471,17 +471,13 @@
                             <span class="stat-value">28만원</span>
                         </div>
                         <div class="stat-row">
-                            <span class="stat-label">주변 환경</span>
-                            <span class="stat-value">특화 프로그램</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">들판/명아</span>
-                            <span class="stat-value">4개</span>
+                            <span class="stat-label">수용인원</span>
+                            <span class="stat-value">35명</span>
                         </div>
                     </div>
                     <div class="region-actions">
                         <button class="btn-detail" onclick="showRegionDetail('경북 영양군')">자세히 보기</button>
-                        <button class="btn-compare" onclick="compareRegion('경북 영양군')">비교하기</button>
+                        <button class="btn-compare" onclick="addToWishlist('경북 영양군')">관심지역 추가</button>
                     </div>
                 </div>
             </div>
@@ -492,6 +488,7 @@
                 </div>
                 <div class="region-content">
                     <h3 class="region-title">충남 홍성군</h3>
+                    <p class="region-description text-muted mb-3">서해안에 인접한 농촌지역으로 기차여행과 자연친화적인 체험이 가능합니다.</p>
                     <div class="region-tags">
                         <span class="region-tag">#기차여행</span>
                         <span class="region-tag">#자연친화</span>
@@ -507,17 +504,13 @@
                             <span class="stat-value">32만원</span>
                         </div>
                         <div class="stat-row">
-                            <span class="stat-label">주변 환경</span>
-                            <span class="stat-value">특화 프로그램</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">들판/명아</span>
-                            <span class="stat-value">5개</span>
+                            <span class="stat-label">수용인원</span>
+                            <span class="stat-value">40명</span>
                         </div>
                     </div>
                     <div class="region-actions">
                         <button class="btn-detail" onclick="showRegionDetail('충남 홍성군')">자세히 보기</button>
-                        <button class="btn-compare" onclick="compareRegion('충남 홍성군')">비교하기</button>
+                        <button class="btn-compare" onclick="addToWishlist('충남 홍성군')">관심지역 추가</button>
                     </div>
                 </div>
             </div>
@@ -528,6 +521,7 @@
                 </div>
                 <div class="region-content">
                     <h3 class="region-title">제주 서귀포시</h3>
+                    <p class="region-description text-muted mb-3">아름다운 섬 지역으로 독특한 지역문화와 고원지대의 특별한 체험을 제공합니다.</p>
                     <div class="region-tags">
                         <span class="region-tag">#고원지대</span>
                         <span class="region-tag">#치즈마을</span>
@@ -543,17 +537,13 @@
                             <span class="stat-value">40만원</span>
                         </div>
                         <div class="stat-row">
-                            <span class="stat-label">주변 환경</span>
-                            <span class="stat-value">특화 프로그램</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">들판/명아</span>
-                            <span class="stat-value">2개</span>
+                            <span class="stat-label">수용인원</span>
+                            <span class="stat-value">18명</span>
                         </div>
                     </div>
                     <div class="region-actions">
                         <button class="btn-detail" onclick="showRegionDetail('제주 서귀포시')">자세히 보기</button>
-                        <button class="btn-compare" onclick="compareRegion('제주 서귀포시')">비교하기</button>
+                        <button class="btn-compare" onclick="addToWishlist('제주 서귀포시')">관심지역 추가</button>
                     </div>
                 </div>
             </div>
@@ -635,24 +625,14 @@
             alert(`${regionName}의 상세 정보를 보여드립니다. (상세 페이지로 이동)`);
         }
         
-        function compareRegion(regionName) {
+        function addToWishlist(regionName) {
             if (comparedRegions.includes(regionName)) {
-                alert('이미 비교 목록에 추가된 지역입니다.');
-                return;
-            }
-            
-            if (comparedRegions.length >= 3) {
-                alert('최대 3개 지역까지만 비교할 수 있습니다.');
+                alert('이미 관심지역에 추가된 지역입니다.');
                 return;
             }
             
             comparedRegions.push(regionName);
-            
-            if (comparedRegions.length >= 2) {
-                showComparisonModal();
-            } else {
-                alert(`${regionName}이(가) 비교 목록에 추가되었습니다. (${comparedRegions.length}/3)`);
-            }
+            alert(`${regionName}이(가) 관심지역에 추가되었습니다! 총 ${comparedRegions.length}개 지역`);
         }
         
         function showComparisonModal() {
