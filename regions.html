@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>농촌유학 지역 정보 - 시골친구</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <style>
+        .regions-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5rem 0;
+            text-align: center;
+        }
+        
+        .regions-hero h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .regions-hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .search-section {
+            background: white;
+            padding: 2rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .search-box {
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(46, 139, 87, 0.25);
+        }
+        
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        
+        .filter-tag {
+            background: white;
+            border: 2px solid #e9ecef;
+            color: #666;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-tag:hover,
+        .filter-tag.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .regions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            padding: 3rem 0;
+        }
+        
+        .region-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .region-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+        
+        .region-image {
+            height: 200px;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .region-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .region-card:hover .region-image img {
+            transform: scale(1.1);
+        }
+        
+        .region-content {
+            padding: 1.5rem;
+        }
+        
+        .region-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .region-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .region-tag {
+            background: #f8f9fa;
+            color: #666;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .region-stats {
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .region-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-detail {
+            flex: 1;
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 0.7rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-detail:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-compare {
+            flex: 1;
+            background: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            color: white;
+            padding: 0.7rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-compare:hover {
+            background: #228B22;
+            border-color: #228B22;
+            transform: translateY(-2px);
+        }
+        
+        .navbar {
+            background: white !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: #666 !important;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary-color) !important;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background: #228B22;
+            border-color: #228B22;
+        }
+        
+        @media (max-width: 768px) {
+            .regions-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .regions-grid {
+                grid-template-columns: 1fr;
+                padding: 2rem 0;
+            }
+            
+            .filter-tags {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+            
+            .filter-tag {
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-seedling me-2"></i>시골친구
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">홈</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="regions.html">지역정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html#matching">AI매칭</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#community">커뮤니티</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">문의하기</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary text-white px-3 ms-2" href="index.html#apply">시작하기</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="regions-hero">
+        <div class="container">
+            <h1>농촌유학 지역 정보</h1>
+            <p>전국의 다양한 농촌유학 지역들을 살펴보고 우리 아이에게 맞는 곳을 찾아보세요</p>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="지역 이름으로 검색하기" id="searchInput">
+            </div>
+            
+            <div class="text-center mb-3">
+                <h6 class="fw-bold text-dark">관심 분야로 찾기</h6>
+            </div>
+            
+            <div class="filter-tags">
+                <span class="filter-tag active" data-filter="all">#생태체험</span>
+                <span class="filter-tag" data-filter="education">#소규모학교</span>
+                <span class="filter-tag" data-filter="culture">#기차여행</span>
+                <span class="filter-tag" data-filter="farming">#고원지대</span>
+                <span class="filter-tag" data-filter="sports">#스포츠</span>
+                <span class="filter-tag" data-filter="tradition">#자연친화</span>
+                <span class="filter-tag" data-filter="nature">#치즈마을</span>
+                <span class="filter-tag" data-filter="ecology">#농촌체험</span>
+                <span class="filter-tag" data-filter="character">#산간지역</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Regions Grid -->
+    <section class="container">
+        <div class="regions-grid" id="regionsGrid">
+            <!-- 전남 곡성군 -->
+            <div class="region-card" data-category="farming tradition">
+                <div class="region-image">
+                    <img src="https://images.unsplash.com/photo-1571771019784-3ff35f4f4277?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="전남 곡성군">
+                </div>
+                <div class="region-content">
+                    <h3 class="region-title">전남 곡성군</h3>
+                    <div class="region-tags">
+                        <span class="region-tag">#생태체험</span>
+                        <span class="region-tag">#소규모학교</span>
+                        <span class="region-tag">#기차여행</span>
+                    </div>
+                    <div class="region-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">참여 학교</span>
+                            <span class="stat-value">5개교</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">월 평균 비용</span>
+                            <span class="stat-value">30만원</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">주변 환경</span>
+                            <span class="stat-value">특화 프로그램</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">들판/명아</span>
+                            <span class="stat-value">3개</span>
+                        </div>
+                    </div>
+                    <div class="region-actions">
+                        <button class="btn-detail" onclick="showRegionDetail('전남 곡성군')">자세히 보기</button>
+                        <button class="btn-compare" onclick="compareRegion('전남 곡성군')">비교하기</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 강원 평창군 -->
+            <div class="region-card" data-category="sports nature ecology">
+                <div class="region-image">
+                    <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="강원 평창군">
+                </div>
+                <div class="region-content">
+                    <h3 class="region-title">강원 평창군</h3>
+                    <div class="region-tags">
+                        <span class="region-tag">#고원지대</span>
+                        <span class="region-tag">#스포츠</span>
+                        <span class="region-tag">#자연친화</span>
+                    </div>
+                    <div class="region-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">참여 학교</span>
+                            <span class="stat-value">4개교</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">월 평균 비용</span>
+                            <span class="stat-value">35만원</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">주변 환경</span>
+                            <span class="stat-value">특화 프로그램</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">들판/명아</span>
+                            <span class="stat-value">3개</span>
+                        </div>
+                    </div>
+                    <div class="region-actions">
+                        <button class="btn-detail" onclick="showRegionDetail('강원 평창군')">자세히 보기</button>
+                        <button class="btn-compare" onclick="compareRegion('강원 평창군')">비교하기</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 전북 임실군 -->
+            <div class="region-card" data-category="culture tradition character">
+                <div class="region-image">
+                    <img src="https://images.unsplash.com/photo-1564415637254-92c66292cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="전북 임실군">
+                </div>
+                <div class="region-content">
+                    <h3 class="region-title">전북 임실군</h3>
+                    <div class="region-tags">
+                        <span class="region-tag">#치즈마을</span>
+                        <span class="region-tag">#농촌체험</span>
+                        <span class="region-tag">#산간지역</span>
+                    </div>
+                    <div class="region-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">참여 학교</span>
+                            <span class="stat-value">3개교</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">월 평균 비용</span>
+                            <span class="stat-value">25만원</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">주변 환경</span>
+                            <span class="stat-value">특화 프로그램</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">들판/명아</span>
+                            <span class="stat-value">3개</span>
+                        </div>
+                    </div>
+                    <div class="region-actions">
+                        <button class="btn-detail" onclick="showRegionDetail('전북 임실군')">자세히 보기</button>
+                        <button class="btn-compare" onclick="compareRegion('전북 임실군')">비교하기</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 추가 지역들... -->
+            <div class="region-card" data-category="education nature">
+                <div class="region-image">
+                    <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="경북 영양군">
+                </div>
+                <div class="region-content">
+                    <h3 class="region-title">경북 영양군</h3>
+                    <div class="region-tags">
+                        <span class="region-tag">#생태체험</span>
+                        <span class="region-tag">#소규모학교</span>
+                        <span class="region-tag">#농촌체험</span>
+                    </div>
+                    <div class="region-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">참여 학교</span>
+                            <span class="stat-value">6개교</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">월 평균 비용</span>
+                            <span class="stat-value">28만원</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">주변 환경</span>
+                            <span class="stat-value">특화 프로그램</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">들판/명아</span>
+                            <span class="stat-value">4개</span>
+                        </div>
+                    </div>
+                    <div class="region-actions">
+                        <button class="btn-detail" onclick="showRegionDetail('경북 영양군')">자세히 보기</button>
+                        <button class="btn-compare" onclick="compareRegion('경북 영양군')">비교하기</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="region-card" data-category="farming tradition">
+                <div class="region-image">
+                    <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="충남 홍성군">
+                </div>
+                <div class="region-content">
+                    <h3 class="region-title">충남 홍성군</h3>
+                    <div class="region-tags">
+                        <span class="region-tag">#기차여행</span>
+                        <span class="region-tag">#자연친화</span>
+                        <span class="region-tag">#농촌체험</span>
+                    </div>
+                    <div class="region-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">참여 학교</span>
+                            <span class="stat-value">7개교</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">월 평균 비용</span>
+                            <span class="stat-value">32만원</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">주변 환경</span>
+                            <span class="stat-value">특화 프로그램</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">들판/명아</span>
+                            <span class="stat-value">5개</span>
+                        </div>
+                    </div>
+                    <div class="region-actions">
+                        <button class="btn-detail" onclick="showRegionDetail('충남 홍성군')">자세히 보기</button>
+                        <button class="btn-compare" onclick="compareRegion('충남 홍성군')">비교하기</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="region-card" data-category="sports nature character">
+                <div class="region-image">
+                    <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="제주 서귀포시">
+                </div>
+                <div class="region-content">
+                    <h3 class="region-title">제주 서귀포시</h3>
+                    <div class="region-tags">
+                        <span class="region-tag">#고원지대</span>
+                        <span class="region-tag">#치즈마을</span>
+                        <span class="region-tag">#산간지역</span>
+                    </div>
+                    <div class="region-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">참여 학교</span>
+                            <span class="stat-value">4개교</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">월 평균 비용</span>
+                            <span class="stat-value">40만원</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">주변 환경</span>
+                            <span class="stat-value">특화 프로그램</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">들판/명아</span>
+                            <span class="stat-value">2개</span>
+                        </div>
+                    </div>
+                    <div class="region-actions">
+                        <button class="btn-detail" onclick="showRegionDetail('제주 서귀포시')">자세히 보기</button>
+                        <button class="btn-compare" onclick="compareRegion('제주 서귀포시')">비교하기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Modal -->
+    <div class="modal fade" id="comparisonModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-balance-scale me-2"></i>지역 비교하기
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="comparisonContent">
+                    <!-- 비교 내용이 여기에 동적으로 생성됩니다 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let comparedRegions = [];
+        
+        // 필터 기능
+        document.querySelectorAll('.filter-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                // 활성화 토글
+                document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                filterRegions(filter);
+            });
+        });
+        
+        // 검색 기능
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            searchRegions(searchTerm);
+        });
+        
+        function filterRegions(filter) {
+            const cards = document.querySelectorAll('.region-card');
+            
+            cards.forEach(card => {
+                if (filter === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    const categories = card.getAttribute('data-category').split(' ');
+                    if (categories.includes(filter)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+        }
+        
+        function searchRegions(searchTerm) {
+            const cards = document.querySelectorAll('.region-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.region-title').textContent.toLowerCase();
+                const tags = Array.from(card.querySelectorAll('.region-tag')).map(tag => tag.textContent.toLowerCase());
+                
+                if (title.includes(searchTerm) || tags.some(tag => tag.includes(searchTerm))) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        function showRegionDetail(regionName) {
+            alert(`${regionName}의 상세 정보를 보여드립니다. (상세 페이지로 이동)`);
+        }
+        
+        function compareRegion(regionName) {
+            if (comparedRegions.includes(regionName)) {
+                alert('이미 비교 목록에 추가된 지역입니다.');
+                return;
+            }
+            
+            if (comparedRegions.length >= 3) {
+                alert('최대 3개 지역까지만 비교할 수 있습니다.');
+                return;
+            }
+            
+            comparedRegions.push(regionName);
+            
+            if (comparedRegions.length >= 2) {
+                showComparisonModal();
+            } else {
+                alert(`${regionName}이(가) 비교 목록에 추가되었습니다. (${comparedRegions.length}/3)`);
+            }
+        }
+        
+        function showComparisonModal() {
+            const modal = new bootstrap.Modal(document.getElementById('comparisonModal'));
+            const content = document.getElementById('comparisonContent');
+            
+            content.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    선택된 지역들을 비교합니다: ${comparedRegions.join(', ')}
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>구분</th>
+                                ${comparedRegions.map(region => `<th class="text-center">${region}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>참여 학교 수</strong></td>
+                                ${comparedRegions.map(() => '<td class="text-center">5개교</td>').join('')}
+                            </tr>
+                            <tr>
+                                <td><strong>월 평균 비용</strong></td>
+                                ${comparedRegions.map(() => '<td class="text-center">30만원</td>').join('')}
+                            </tr>
+                            <tr>
+                                <td><strong>특화 프로그램</strong></td>
+                                ${comparedRegions.map(() => '<td class="text-center">3개</td>').join('')}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center mt-3">
+                    <button class="btn btn-outline-danger me-2" onclick="clearComparison()">비교 초기화</button>
+                    <button class="btn btn-primary" onclick="goToDetailComparison()">상세 비교하기</button>
+                </div>
+            `;
+            
+            modal.show();
+        }
+        
+        function clearComparison() {
+            comparedRegions = [];
+            bootstrap.Modal.getInstance(document.getElementById('comparisonModal')).hide();
+        }
+        
+        function goToDetailComparison() {
+            alert('상세 비교 페이지로 이동합니다.');
+        }
+        
+        // 네비게이션 배경 변경
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
+                navbar.style.backdropFilter = 'blur(10px)';
+            } else {
+                navbar.style.backgroundColor = 'white';
+                navbar.style.backdropFilter = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

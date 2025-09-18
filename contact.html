@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문의하기 - 시골친구</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <style>
+        .contact-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+        
+        .contact-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .contact-header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .contact-form-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .contact-info-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(46, 139, 87, 0.25);
+        }
+        
+        .btn-submit {
+            background: var(--primary-color);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-submit:hover {
+            background: #228B22;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(46, 139, 87, 0.3);
+        }
+        
+        .contact-info-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .contact-info-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .contact-detail:last-child {
+            margin-bottom: 0;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #666;
+            min-width: 60px;
+        }
+        
+        .detail-value {
+            color: #333;
+            flex: 1;
+            text-align: right;
+        }
+        
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .navbar {
+            background: white !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav-link {
+            color: #666 !important;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background: #228B22;
+            border-color: #228B22;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-seedling me-2"></i>시골친구
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">홈</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html#regions">지역정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html#matching">AI매칭</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#community">커뮤니티</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="contact.html">문의하기</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary text-white px-3 ms-2" href="index.html#apply">시작하기</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="contact-container" style="margin-top: 100px;">
+        <!-- Header -->
+        <div class="contact-header">
+            <h1>문의하기</h1>
+            <p>시골친구 프로그램에 대해 궁금하신 점이 있으시다면 언제든 문의해주세요</p>
+        </div>
+
+        <div class="row">
+            <!-- Contact Form -->
+            <div class="col-lg-7">
+                <div class="contact-form-section">
+                    <form id="contactForm">
+                        <div class="mb-4">
+                            <label for="name" class="form-label">이름</label>
+                            <input type="text" class="form-control" id="name" placeholder="이름을 입력해주세요" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="email" class="form-label">이메일</label>
+                            <input type="email" class="form-control" id="email" placeholder="이메일을 입력해주세요" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="phone" class="form-label">연락처</label>
+                            <input type="tel" class="form-control" id="phone" placeholder="연락처를 입력해주세요">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="message" class="form-label">문의내용</label>
+                            <textarea class="form-control" id="message" rows="6" placeholder="문의하실 내용을 자세히 적어주세요" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-submit text-white">
+                            <i class="fas fa-paper-plane me-2"></i>문의하기
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Contact Information -->
+            <div class="col-lg-5">
+                <div class="contact-info-section">
+                    <h3 class="mb-4 fw-bold">지역별 담당자 연락처</h3>
+                    
+                    <!-- 전남 곡성군 -->
+                    <div class="contact-info-card">
+                        <div class="contact-info-title">전남 곡성군</div>
+                        <div class="contact-detail">
+                            <span class="detail-label">담당자</span>
+                            <span class="detail-value">김담당</span>
+                        </div>
+                        <div class="contact-detail">
+                            <span class="detail-label">전화</span>
+                            <span class="detail-value">061-123-4567</span>
+                        </div>
+                        <div class="contact-detail">
+                            <span class="detail-label">이메일</span>
+                            <span class="detail-value">gokseong@rural.edu</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 전북 임실군 -->
+                    <div class="contact-info-card">
+                        <div class="contact-info-title">전북 임실군</div>
+                        <div class="contact-detail">
+                            <span class="detail-label">담당자</span>
+                            <span class="detail-value">이담당</span>
+                        </div>
+                        <div class="contact-detail">
+                            <span class="detail-label">전화</span>
+                            <span class="detail-value">063-234-5678</span>
+                        </div>
+                        <div class="contact-detail">
+                            <span class="detail-label">이메일</span>
+                            <span class="detail-value">imsil@rural.edu</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 강원 평창군 -->
+                    <div class="contact-info-card">
+                        <div class="contact-info-title">강원 평창군</div>
+                        <div class="contact-detail">
+                            <span class="detail-label">담당자</span>
+                            <span class="detail-value">박담당</span>
+                        </div>
+                        <div class="contact-detail">
+                            <span class="detail-label">전화</span>
+                            <span class="detail-value">033-345-6789</span>
+                        </div>
+                        <div class="contact-detail">
+                            <span class="detail-label">이메일</span>
+                            <span class="detail-value">pyeongchang@rural.edu</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 일반 문의 -->
+                    <div class="contact-info-card" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                        <div class="contact-info-title" style="color: var(--primary-color);">
+                            <i class="fas fa-headset me-2"></i>일반 문의
+                        </div>
+                        <div class="contact-detail">
+                            <span class="detail-label">대표번호</span>
+                            <span class="detail-value">1588-0000</span>
+                        </div>
+                        <div class="contact-detail">
+                            <span class="detail-label">이메일</span>
+                            <span class="detail-value">contact@sigolfriend.kr</span>
+                        </div>
+                        <div class="contact-detail">
+                            <span class="detail-label">운영시간</span>
+                            <span class="detail-value">평일 09:00-18:00</span>
+                        </div>
+                    </div>
+                    
+                    <!-- FAQ 안내 -->
+                    <div class="mt-4 p-3" style="background: rgba(46, 139, 87, 0.1); border-radius: 12px;">
+                        <h6 class="fw-bold mb-2">
+                            <i class="fas fa-question-circle text-primary me-2"></i>자주 묻는 질문
+                        </h6>
+                        <p class="small text-muted mb-2">농촌유학에 대한 기본적인 정보는 FAQ를 먼저 확인해보세요.</p>
+                        <button class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-external-link-alt me-1"></i>FAQ 보러가기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-check-circle text-success" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">문의가 접수되었습니다!</h5>
+                    <p class="text-muted mb-4">담당자가 검토 후 빠른 시일 내에 연락드리겠습니다.</p>
+                    <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 폼 제출 처리
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 폼 데이터 수집
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                message: document.getElementById('message').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            // 로컬 스토리지에 저장 (실제로는 서버로 전송)
+            const contacts = JSON.parse(localStorage.getItem('contacts') || '[]');
+            contacts.push(formData);
+            localStorage.setItem('contacts', JSON.stringify(contacts));
+            
+            // 성공 모달 표시
+            const modal = new bootstrap.Modal(document.getElementById('successModal'));
+            modal.show();
+            
+            // 폼 리셋
+            this.reset();
+        });
+        
+        // 부드러운 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 네비게이션 배경 변경
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
+                navbar.style.backdropFilter = 'blur(10px)';
+            } else {
+                navbar.style.backgroundColor = 'white';
+                navbar.style.backdropFilter = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
