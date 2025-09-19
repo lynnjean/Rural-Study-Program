@@ -178,6 +178,9 @@
               <a class="nav-link" href="contact.html">문의하기</a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="#" onclick="showLoginModal()">로그인</a>
+            </li>
+            <li class="nav-item">
               <a
                 class="nav-link btn btn-primary text-white px-3 ms-2"
                 href="#apply"
@@ -792,6 +795,282 @@
             <!-- Application form will be loaded here -->
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-sign-in-alt me-2"></i>로그인
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-info border-0 mb-3">
+              <small class="fw-bold">📋 빠른 로그인</small><br>
+              <div class="d-grid gap-1 mt-2">
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="quickLogin('parent@test.com', '123456')">
+                  👨‍👩‍👧‍👦 학부모로 로그인
+                </button>
+                <button type="button" class="btn btn-outline-success btn-sm" onclick="quickLogin('coordinator@test.com', '123456')">
+                  👔 코디네이터로 로그인
+                </button>
+                <button type="button" class="btn btn-outline-warning btn-sm" onclick="quickLogin('admin@test.com', '123456')">
+                  🏛️ 교육청으로 로그인
+                </button>
+              </div>
+            </div>
+            
+            <form id="loginForm">
+              <div class="mb-3">
+                <label for="loginEmail" class="form-label">이메일</label>
+                <input type="email" class="form-control" id="loginEmail" required>
+              </div>
+              <div class="mb-3">
+                <label for="loginPassword" class="form-label">비밀번호</label>
+                <input type="password" class="form-control" id="loginPassword" required>
+              </div>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary">로그인</button>
+              </div>
+            </form>
+            <hr>
+            <div class="text-center">
+              <p class="mb-2">계정이 없으신가요?</p>
+              <button class="btn btn-outline-primary" onclick="showSignupModal()">회원가입</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal fade" id="signupModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-user-plus me-2"></i>회원가입
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="signupForm">
+              <!-- 사용자 타입 선택 -->
+              <div class="mb-4">
+                <label class="form-label fw-bold">계정 유형 선택</label>
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <div class="user-type-card card border-2 h-100" data-type="parent">
+                      <div class="card-body text-center p-3">
+                        <div class="user-type-icon text-primary mb-2">
+                          <i class="fas fa-family fa-2x"></i>
+                        </div>
+                        <h6 class="fw-bold">학생/학부모</h6>
+                        <small class="text-muted">농촌유학을 희망하는 학생과 학부모</small>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="user-type-card card border-2 h-100" data-type="coordinator">
+                      <div class="card-body text-center p-3">
+                        <div class="user-type-icon text-success mb-2">
+                          <i class="fas fa-user-tie fa-2x"></i>
+                        </div>
+                        <h6 class="fw-bold">지역 코디네이터</h6>
+                        <small class="text-muted">농촌유학 지역 관리 및 상담</small>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="user-type-card card border-2 h-100" data-type="admin">
+                      <div class="card-body text-center p-3">
+                        <div class="user-type-icon text-warning mb-2">
+                          <i class="fas fa-building fa-2x"></i>
+                        </div>
+                        <h6 class="fw-bold">교육청 담당자</h6>
+                        <small class="text-muted">농촌유학 정책 및 현황 관리</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <input type="hidden" id="userType" name="userType" required>
+              </div>
+
+              <!-- 기본 정보 -->
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="signupName" class="form-label">이름</label>
+                  <input type="text" class="form-control" id="signupName" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="signupPhone" class="form-label">연락처</label>
+                  <input type="tel" class="form-control" id="signupPhone" required>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="signupEmail" class="form-label">이메일</label>
+                <input type="email" class="form-control" id="signupEmail" required>
+              </div>
+              
+              <div class="mb-3">
+                <label for="signupPassword" class="form-label">비밀번호</label>
+                <input type="password" class="form-control" id="signupPassword" required>
+              </div>
+              
+              <div class="mb-3">
+                <label for="confirmPassword" class="form-label">비밀번호 확인</label>
+                <input type="password" class="form-control" id="confirmPassword" required>
+              </div>
+
+              <!-- 사용자 타입별 추가 정보 -->
+              <div id="parentFields" class="user-specific-fields" style="display: none;">
+                <hr>
+                <h6 class="fw-bold mb-3">학생 정보</h6>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="studentName" class="form-label">학생 이름</label>
+                    <input type="text" class="form-control" id="studentName">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="studentGrade" class="form-label">학년</label>
+                    <select class="form-control" id="studentGrade">
+                      <option value="">선택해주세요</option>
+                      <option value="1">1학년</option>
+                      <option value="2">2학년</option>
+                      <option value="3">3학년</option>
+                      <option value="4">4학년</option>
+                      <option value="5">5학년</option>
+                      <option value="6">6학년</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="currentSchool" class="form-label">현재 다니는 학교</label>
+                  <input type="text" class="form-control" id="currentSchool">
+                </div>
+              </div>
+
+              <div id="coordinatorFields" class="user-specific-fields" style="display: none;">
+                <hr>
+                <h6 class="fw-bold mb-3">근무 정보</h6>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="workRegion" class="form-label">담당 지역</label>
+                    <select class="form-control" id="workRegion">
+                      <option value="">선택해주세요</option>
+                      <option value="gangwon">강원도</option>
+                      <option value="jeonnam">전라남도</option>
+                      <option value="jeonbuk">전라북도</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="workOrganization" class="form-label">소속 기관</label>
+                    <input type="text" class="form-control" id="workOrganization">
+                  </div>
+                </div>
+              </div>
+
+              <div id="adminFields" class="user-specific-fields" style="display: none;">
+                <hr>
+                <h6 class="fw-bold mb-3">담당 정보</h6>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="adminRegion" class="form-label">담당 교육청</label>
+                    <select class="form-control" id="adminRegion">
+                      <option value="">선택해주세요</option>
+                      <option value="seoul">서울특별시교육청</option>
+                      <option value="gangwon">강원도교육청</option>
+                      <option value="jeonnam">전라남도교육청</option>
+                      <option value="jeonbuk">전라북도교육청</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="department" class="form-label">담당 부서</label>
+                    <input type="text" class="form-control" id="department">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                <label class="form-check-label" for="agreeTerms">
+                  <a href="#" class="text-decoration-none">이용약관</a> 및 <a href="#" class="text-decoration-none">개인정보처리방침</a>에 동의합니다
+                </label>
+              </div>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary">회원가입</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 24시간 AI 상담 챗봇 -->
+    <div class="chatbot-container" id="chatbotContainer">
+      <div class="chatbot-window" id="chatbotWindow">
+        <div class="chatbot-header">
+          <div class="d-flex align-items-center">
+            <div class="chatbot-avatar me-2">
+              <i class="fas fa-robot"></i>
+            </div>
+            <div>
+              <h6 class="mb-0">시골친구 AI 상담</h6>
+              <small class="text-muted">24시간 언제든지 도움드려요</small>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-link text-white" onclick="toggleChatbot()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="chatbot-messages" id="chatbotMessages">
+          <div class="message bot-message">
+            <div class="message-avatar">
+              <i class="fas fa-robot"></i>
+            </div>
+            <div class="message-content">
+              <p>안녕하세요! 시골친구 AI 상담사입니다. 🌱</p>
+              <p>농촌유학에 대해 궁금한 점이 있으시면 언제든 물어보세요!</p>
+              <div class="quick-buttons">
+                <button class="quick-btn" onclick="sendQuickMessage('농촌유학이 뭔가요?')">농촌유학이 뭔가요?</button>
+                <button class="quick-btn" onclick="sendQuickMessage('비용이 얼마나 드나요?')">비용은 얼마인가요?</button>
+                <button class="quick-btn" onclick="sendQuickMessage('신청 방법을 알려주세요')">신청방법</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chatbot-input">
+          <form id="chatForm" onsubmit="sendMessage(event)">
+            <div class="input-group">
+              <input type="text" class="form-control" id="chatInput" 
+                     placeholder="궁금한 점을 물어보세요..." maxlength="200">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <div class="chatbot-toggle" onclick="toggleChatbot()" id="chatbotToggle">
+        <i class="fas fa-comments"></i>
+        <span class="chatbot-badge">AI</span>
       </div>
     </div>
 

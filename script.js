@@ -1,3 +1,106 @@
+// 사용자 관리 시스템
+const userSystem = {
+  currentUser: null,
+  
+  // 로그인
+  login(email, password) {
+    const users = JSON.parse(localStorage.getItem('sigolfriend_users') || '[]');
+    const user = users.find(u => u.email === email && u.password === password);
+    
+    if (user) {
+      this.currentUser = user;
+      localStorage.setItem('sigolfriend_current_user', JSON.stringify(user));
+      this.updateUI();
+      return { success: true, user };
+    }
+    return { success: false, message: '이메일 또는 비밀번호가 올바르지 않습니다.' };
+  },
+  
+  // 회원가입
+  signup(userData) {
+    const users = JSON.parse(localStorage.getItem('sigolfriend_users') || '[]');
+    
+    // 이메일 중복 체크
+    if (users.find(u => u.email === userData.email)) {
+      return { success: false, message: '이미 등록된 이메일입니다.' };
+    }
+    
+    // 사용자 ID 생성
+    userData.id = Date.now().toString();
+    userData.createdAt = new Date().toISOString();
+    
+    users.push(userData);
+    localStorage.setItem('sigolfriend_users', JSON.stringify(users));
+    
+    return { success: true, message: '회원가입이 완료되었습니다.' };
+  },
+  
+  // 로그아웃
+  logout() {
+    this.currentUser = null;
+    localStorage.removeItem('sigolfriend_current_user');
+    this.updateUI();
+    location.reload();
+  },
+  
+  // 현재 사용자 정보 로드
+  loadCurrentUser() {
+    const user = localStorage.getItem('sigolfriend_current_user');
+    if (user) {
+      this.currentUser = JSON.parse(user);
+      this.updateUI();
+    }
+  },
+  
+  // UI 업데이트
+  updateUI() {
+    const loginBtn = document.querySelector('a[onclick="showLoginModal()"]');
+    const signupBtn = document.querySelector('.nav-link.btn.btn-primary');
+    
+    if (this.currentUser && loginBtn) {
+      // 로그인 상태 - 사용자 메뉴 표시
+      const userMenu = this.createUserMenu();
+      loginBtn.parentElement.innerHTML = userMenu;
+    } else if (loginBtn) {
+      // 로그아웃 상태 - 로그인 버튼 표시
+      loginBtn.innerHTML = '로그인';
+      loginBtn.onclick = showLoginModal;
+    }
+  },
+  
+  // 사용자 메뉴 생성
+  createUserMenu() {
+    const user = this.currentUser;
+    const initial = user.name.charAt(0).toUpperCase();
+    const userTypeText = {
+      'parent': '학부모',
+      'coordinator': '코디네이터', 
+      'admin': '교육청'
+    }[user.userType] || '사용자';
+    
+    return `
+      <div class="user-menu">
+        <div class="user-profile show" onclick="toggleUserDropdown()">
+          <div class="user-avatar">${initial}</div>
+          <span class="d-none d-md-inline">${user.name}</span>
+          <i class="fas fa-chevron-down ms-1"></i>
+        </div>
+        <div class="user-dropdown" id="userDropdown">
+          <a href="#" onclick="showDashboard()">
+            <i class="fas fa-tachometer-alt me-2"></i>대시보드
+          </a>
+          <a href="#" onclick="showProfile()">
+            <i class="fas fa-user me-2"></i>프로필
+          </a>
+          <a href="#" onclick="userSystem.logout()">
+            <i class="fas fa-sign-out-alt me-2"></i>로그아웃
+          </a>
+        </div>
+      </div>
+    `;
+  }
+};
+
 // AI 매칭 시스템 데이터
 const matchingData = {
   interests: [
@@ -1452,4 +1555,931 @@ function submitApplication() {
   bootstrap.Modal.getInstance(
     document.getElementById("applicationModal")
   ).hide();
+}
+
+// ========== 로그인/회원가입 관련 함수들 ==========
+
+// 로그인 모달 표시
+function showLoginModal() {
+  const modal = new bootstrap.Modal(document.getElementById('loginModal'));
+  modal.show();
+}
+
+// 회원가입 모달 표시 
+function showSignupModal() {
+  // 로그인 모달 숨기기
+  const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+  if (loginModal) {
+    loginModal.hide();
+  }
+  
+  // 회원가입 모달 표시
+  const modal = new bootstrap.Modal(document.getElementById('signupModal'));
+  modal.show();
+}
+
+// 사용자 드롭다운 토글
+function toggleUserDropdown() {
+  const dropdown = document.getElementById('userDropdown');
+  dropdown.classList.toggle('show');
+}
+
+// 사용자 타입 카드 선택
+function selectUserType(type, element) {
+  // 모든 카드에서 선택 해제
+  document.querySelectorAll('.user-type-card').forEach(card => {
+    card.classList.remove('selected');
+  });
+  
+  // 현재 카드 선택
+  element.classList.add('selected');
+  
+  // hidden input에 값 설정
+  document.getElementById('userType').value = type;
+  
+  // 해당 타입별 추가 필드 표시
+  document.querySelectorAll('.user-specific-fields').forEach(field => {
+    field.style.display = 'none';
+  });
+  
+  if (type === 'parent') {
+    document.getElementById('parentFields').style.display = 'block';
+  } else if (type === 'coordinator') {
+    document.getElementById('coordinatorFields').style.display = 'block';
+  } else if (type === 'admin') {
+    document.getElementById('adminFields').style.display = 'block';
+  }
+}
+
+// 대시보드 표시
+function showDashboard() {
+  const user = userSystem.currentUser;
+  if (!user) return;
+  
+  let dashboardContent = '';
+  
+  switch (user.userType) {
+    case 'parent':
+      dashboardContent = getParentDashboard(user);
+      break;
+    case 'coordinator':
+      dashboardContent = getCoordinatorDashboard(user);
+      break;
+    case 'admin':
+      dashboardContent = getAdminDashboard(user);
+      break;
+  }
+  
+  // 대시보드 모달 생성 및 표시
+  const modalHtml = `
+    <div class="modal fade" id="dashboardModal" tabindex="-1">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header dashboard-${user.userType}">
+            <h5 class="modal-title">
+              <i class="fas fa-tachometer-alt me-2"></i>${user.name}님의 대시보드
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            ${dashboardContent}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // 기존 모달 제거
+  const existingModal = document.getElementById('dashboardModal');
+  if (existingModal) {
+    existingModal.remove();
+  }
+  
+  // 새 모달 추가
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  
+  // 모달 표시
+  const modal = new bootstrap.Modal(document.getElementById('dashboardModal'));
+  modal.show();
+}
+
+// 학부모 대시보드
+function getParentDashboard(user) {
+  return `
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <i class="fas fa-child text-primary fa-2x mb-2"></i>
+            <h6>등록된 학생</h6>
+            <h4 class="text-primary">${user.studentName || '미등록'}</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <i class="fas fa-map-marker-alt text-success fa-2x mb-2"></i>
+            <h6>관심지역</h6>
+            <h4 class="text-success">${favoriteRegions.length}개</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <i class="fas fa-paper-plane text-warning fa-2x mb-2"></i>
+            <h6>신청현황</h6>
+            <h4 class="text-warning">대기중</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row mt-4">
+      <div class="col-12">
+        <h6>최근 활동</h6>
+        <div class="list-group">
+          <div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">AI 매칭 테스트 완료</h6>
+              <small>3일 전</small>
+            </div>
+            <p class="mb-1">강원도 평창군 95% 매칭</p>
+          </div>
+          <div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">관심지역 추가</h6>
+              <small>1주 전</small>
+            </div>
+            <p class="mb-1">전라남도 순천시를 관심지역에 추가했습니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// 코디네이터 대시보드
+function getCoordinatorDashboard(user) {
+  return `
+    <div class="row">
+      <div class="col-md-3 mb-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <i class="fas fa-users text-primary fa-2x mb-2"></i>
+            <h6>담당 학생</h6>
+            <h4 class="text-primary">12명</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <i class="fas fa-school text-success fa-2x mb-2"></i>
+            <h6>참여 학교</h6>
+            <h4 class="text-success">5개교</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <i class="fas fa-home text-warning fa-2x mb-2"></i>
+            <h6>숙소 현황</h6>
+            <h4 class="text-warning">8/15</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <i class="fas fa-star text-info fa-2x mb-2"></i>
+            <h6>평균 만족도</h6>
+            <h4 class="text-info">4.8/5</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <h6>대기 중인 신청</h6>
+        <div class="list-group">
+          <div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">김민수 (3학년)</h6>
+              <small>2일 전</small>
+            </div>
+            <p class="mb-1">서울 마포구 → ${user.workRegion}</p>
+            <button class="btn btn-sm btn-primary">검토하기</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <h6>이번 주 일정</h6>
+        <div class="list-group">
+          <div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">신입생 오리엔테이션</h6>
+              <small>목요일</small>
+            </div>
+            <p class="mb-1">농촌생활 적응 프로그램</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// 교육청 대시보드
+function getAdminDashboard(user) {
+  return `
+    <div class="row">
+      <div class="col-md-3 mb-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <i class="fas fa-chart-line text-primary fa-2x mb-2"></i>
+            <h6>전체 참여학생</h6>
+            <h4 class="text-primary">352명</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <i class="fas fa-map text-success fa-2x mb-2"></i>
+            <h6>참여 지역</h6>
+            <h4 class="text-success">3개 도</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <i class="fas fa-money-bill-wave text-warning fa-2x mb-2"></i>
+            <h6>예산 집행률</h6>
+            <h4 class="text-warning">75%</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <i class="fas fa-thumbs-up text-info fa-2x mb-2"></i>
+            <h6>전체 만족도</h6>
+            <h4 class="text-info">88.1%</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row mt-4">
+      <div class="col-md-8">
+        <h6>지역별 현황</h6>
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>지역</th>
+                <th>참여학생</th>
+                <th>수용인원</th>
+                <th>만족도</th>
+                <th>상태</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>강원도</td>
+                <td>125명</td>
+                <td>150명</td>
+                <td>4.7/5</td>
+                <td><span class="badge bg-success">정상</span></td>
+              </tr>
+              <tr>
+                <td>전라남도</td>
+                <td>142명</td>
+                <td>160명</td>
+                <td>4.8/5</td>
+                <td><span class="badge bg-success">정상</span></td>
+              </tr>
+              <tr>
+                <td>전라북도</td>
+                <td>85명</td>
+                <td>120명</td>
+                <td>4.6/5</td>
+                <td><span class="badge bg-warning">관심필요</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <h6>최근 이슈</h6>
+        <div class="list-group">
+          <div class="list-group-item">
+            <h6 class="mb-1">예산 재편성 필요</h6>
+            <p class="mb-1 small">전북 지역 숙소 확충 예산</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// 프로필 보기
+function showProfile() {
+  const user = userSystem.currentUser;
+  if (!user) return;
+  
+  const modalHtml = `
+    <div class="modal fade" id="profileModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-user me-2"></i>프로필 정보
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="text-center mb-4">
+              <div class="user-avatar mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
+                ${user.name.charAt(0).toUpperCase()}
+              </div>
+              <h5>${user.name}</h5>
+              <span class="badge bg-${user.userType === 'parent' ? 'primary' : user.userType === 'coordinator' ? 'success' : 'warning'}">
+                ${user.userType === 'parent' ? '학부모' : user.userType === 'coordinator' ? '코디네이터' : '교육청'}
+              </span>
+            </div>
+            
+            <div class="row">
+              <div class="col-6 mb-3">
+                <label class="form-label">이름</label>
+                <input type="text" class="form-control" value="${user.name}" readonly>
+              </div>
+              <div class="col-6 mb-3">
+                <label class="form-label">연락처</label>
+                <input type="text" class="form-control" value="${user.phone}" readonly>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">이메일</label>
+              <input type="email" class="form-control" value="${user.email}" readonly>
+            </div>
+            
+            ${user.userType === 'parent' && user.studentName ? `
+              <div class="mb-3">
+                <label class="form-label">학생 이름</label>
+                <input type="text" class="form-control" value="${user.studentName}" readonly>
+              </div>
+            ` : ''}
+            
+            ${user.workRegion ? `
+              <div class="mb-3">
+                <label class="form-label">담당 지역</label>
+                <input type="text" class="form-control" value="${user.workRegion}" readonly>
+              </div>
+            ` : ''}
+            
+            <div class="mb-3">
+              <label class="form-label">가입일</label>
+              <input type="text" class="form-control" value="${new Date(user.createdAt).toLocaleDateString()}" readonly>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-primary" onclick="editProfile()">
+              <i class="fas fa-edit me-2"></i>정보 수정
+            </button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // 기존 모달 제거
+  const existingModal = document.getElementById('profileModal');
+  if (existingModal) {
+    existingModal.remove();
+  }
+  
+  // 새 모달 추가
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  
+  // 모달 표시
+  const modal = new bootstrap.Modal(document.getElementById('profileModal'));
+  modal.show();
+}
+
+// 프로필 수정 (미구현)
+function editProfile() {
+  alert('프로필 수정 기능은 준비 중입니다.');
+}
+
+// 초기 데이터 설정 (테스트용 계정들)
+function initializeTestAccounts() {
+  const existingUsers = JSON.parse(localStorage.getItem('sigolfriend_users') || '[]');
+  
+  // 이미 계정들이 존재하면 스킵
+  if (existingUsers.length > 0) return;
+  
+  const testAccounts = [
+    // 1. 학부모 계정
+    {
+      id: '1',
+      name: '김영희',
+      phone: '010-1234-5678',
+      email: 'parent@test.com',
+      password: '123456',
+      userType: 'parent',
+      studentName: '김민수',
+      studentGrade: '4',
+      currentSchool: '서울가락초등학교',
+      createdAt: new Date().toISOString()
+    },
+    
+    // 2. 지역 코디네이터 계정  
+    {
+      id: '2',
+      name: '박철수',
+      phone: '010-2345-6789',
+      email: 'coordinator@test.com',
+      password: '123456',
+      userType: 'coordinator',
+      workRegion: '강원도',
+      workOrganization: '평창군 농촌유학 지원센터',
+      createdAt: new Date().toISOString()
+    },
+    
+    // 3. 교육청 담당자 계정
+    {
+      id: '3',
+      name: '이정미',
+      phone: '010-3456-7890',
+      email: 'admin@test.com',
+      password: '123456',
+      userType: 'admin',
+      adminRegion: '서울특별시교육청',
+      department: '혁신교육과',
+      createdAt: new Date().toISOString()
+    },
+    
+    // 4. 추가 학부모 계정
+    {
+      id: '4',
+      name: '최수지',
+      phone: '010-4567-8901',
+      email: 'parent2@test.com',
+      password: '123456',
+      userType: 'parent',
+      studentName: '최지훈',
+      studentGrade: '3',
+      currentSchool: '서울명일초등학교',
+      createdAt: new Date().toISOString()
+    },
+    
+    // 5. 전남 코디네이터 계정
+    {
+      id: '5',
+      name: '한미영',
+      phone: '010-5678-9012',
+      email: 'coordinator2@test.com',
+      password: '123456',
+      userType: 'coordinator',
+      workRegion: '전라남도',
+      workOrganization: '곡성군 농촌유학센터',
+      createdAt: new Date().toISOString()
+    }
+  ];
+  
+  localStorage.setItem('sigolfriend_users', JSON.stringify(testAccounts));
+  console.log('테스트 계정들이 생성되었습니다.');
+}
+
+// 페이지 로드 시 실행
+document.addEventListener('DOMContentLoaded', function() {
+  // 테스트 계정 초기화
+  initializeTestAccounts();
+  
+  // 현재 사용자 정보 로드
+  userSystem.loadCurrentUser();
+  
+  // 사용자 타입 카드 클릭 이벤트
+  document.querySelectorAll('.user-type-card').forEach(card => {
+    card.addEventListener('click', function() {
+      const type = this.getAttribute('data-type');
+      selectUserType(type, this);
+    });
+  });
+  
+  // 로그인 폼 이벤트
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    const result = userSystem.login(email, password);
+    
+    if (result.success) {
+      // 로그인 성공
+      bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+      showToast(`${result.user.name}님, 환영합니다!`, 'success');
+    } else {
+      // 로그인 실패
+      showToast(result.message, 'error');
+    }
+  });
+  
+  // 회원가입 폼 이벤트
+  document.getElementById('signupForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // 비밀번호 확인
+    const password = document.getElementById('signupPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    if (password !== confirmPassword) {
+      showToast('비밀번호가 일치하지 않습니다.', 'error');
+      return;
+    }
+    
+    // 사용자 타입 확인
+    const userType = document.getElementById('userType').value;
+    if (!userType) {
+      showToast('계정 유형을 선택해주세요.', 'error');
+      return;
+    }
+    
+    // 폼 데이터 수집
+    const userData = {
+      name: document.getElementById('signupName').value,
+      phone: document.getElementById('signupPhone').value,
+      email: document.getElementById('signupEmail').value,
+      password: password,
+      userType: userType
+    };
+    
+    // 사용자 타입별 추가 정보
+    if (userType === 'parent') {
+      userData.studentName = document.getElementById('studentName').value;
+      userData.studentGrade = document.getElementById('studentGrade').value;
+      userData.currentSchool = document.getElementById('currentSchool').value;
+    } else if (userType === 'coordinator') {
+      userData.workRegion = document.getElementById('workRegion').value;
+      userData.workOrganization = document.getElementById('workOrganization').value;
+    } else if (userType === 'admin') {
+      userData.adminRegion = document.getElementById('adminRegion').value;
+      userData.department = document.getElementById('department').value;
+    }
+    
+    const result = userSystem.signup(userData);
+    
+    if (result.success) {
+      // 회원가입 성공
+      bootstrap.Modal.getInstance(document.getElementById('signupModal')).hide();
+      showToast('회원가입이 완료되었습니다. 로그인해주세요.', 'success');
+      
+      // 로그인 모달 표시
+      setTimeout(() => {
+        showLoginModal();
+      }, 500);
+    } else {
+      // 회원가입 실패
+      showToast(result.message, 'error');
+    }
+  });
+  
+  // 외부 클릭 시 드롭다운 숨기기
+  document.addEventListener('click', function(e) {
+    const userMenu = document.querySelector('.user-menu');
+    const userDropdown = document.getElementById('userDropdown');
+    
+    if (userMenu && userDropdown && !userMenu.contains(e.target)) {
+      userDropdown.classList.remove('show');
+    }
+  });
+});
+
+// ========== 24시간 AI 챗봇 시스템 ==========
+
+// 챗봇 상태 관리
+const chatbotSystem = {
+  isOpen: false,
+  isTyping: false,
+  
+  // FAQ 데이터베이스
+  faqDatabase: {
+    '농촌유학이 뭔가요?': {
+      answer: `농촌유학은 도시 학생들이 일정 기간 농촌 지역에서 생활하며 농촌 학교에 다니는 교육 프로그램입니다. 🏫
+      
+      <strong>주요 특징:</strong>
+      • 6개월~1년 기간으로 운영
+      • 가족체류형(85%)이 가장 많음
+      • 강원도, 전남, 전북 지역에서 운영
+      • 농촌 문화와 자연을 체험하며 성장`,
+      followUp: ['비용이 얼마나 드나요?', 'AI 매칭은 어떻게 하나요?', '숙소는 어떻게 구하나요?']
+    },
+    
+    '비용이 얼마나 드나요?': {
+      answer: `농촌유학 비용은 지역별로 차이가 있습니다. 💰
+      
+      <strong>월 평균 비용:</strong>
+      • 전북 임실군: 25만원
+      • 전남 곡성군: 30만원  
+      • 강원 평창군: 35만원
+      
+      <strong>지원 제도:</strong>
+      • 교육청별 유학경비 지원 (30~60만원)
+      • 지자체 추가 지원금 있음
+      • 숙박비, 식비, 교통비 포함`,
+      followUp: ['지원금은 어떻게 받나요?', '추가 비용은 뭐가 있나요?', '예산 계산기를 써보고 싶어요']
+    },
+    
+    '신청 방법을 알려주세요': {
+      answer: `농촌유학 신청은 3단계로 진행됩니다! 📝
+      
+      <strong>1단계: 회원가입 & 정보입력</strong>
+      • 학부모 계정으로 가입
+      • 학생 정보 등록
+      
+      <strong>2단계: AI 매칭 & 지역선택</strong>  
+      • AI 매칭 테스트 완료
+      • 추천 지역 3곳 확인
+      
+      <strong>3단계: 신청완료 & 배정</strong>
+      • 온라인 신청서 제출
+      • 서류 검토 후 최종 배정 (3-5일)`,
+      followUp: ['AI 매칭 시작하기', '필요한 서류는 뭔가요?', '언제까지 신청해야 하나요?']
+    },
+    
+    'AI 매칭은 어떻게 하나요?': {
+      answer: `AI 매칭은 아이의 성향과 관심사를 분석해서 최적의 지역을 추천해드려요! 🤖
+      
+      <strong>매칭 요소:</strong>
+      • 관심사/적성 (40점) - 농업체험, 생태학습 등
+      • 환경 선호도 (30점) - 산/바다/강 선호도
+      • 학교 규모 (20점) - 소규모/중규모 선호
+      • 기간/예산 (10점) - 희망 기간과 예산
+      
+      <strong>매칭률:</strong>
+      • 평균 95% 이상의 높은 매칭률
+      • 실시간 자리 현황 반영`,
+      followUp: ['AI 매칭 시작하기', '매칭률이 낮으면 어떻게 하나요?', '다시 매칭할 수 있나요?']
+    },
+    
+    '숙소는 어떻게 구하나요?': {
+      answer: `숙소는 저희 플랫폼에서 통합 관리하고 있어요! 🏠
+      
+      <strong>숙소 유형:</strong>
+      • 가족체류형 (85%) - 독립된 주택
+      • 기숙사형 - 학교 기숙사
+      • 민박형 - 농가 민박
+      
+      <strong>숙소 지원:</strong>
+      • VR로 미리 둘러보기 가능
+      • 투명한 임대료 정보 공개
+      • 품질 인증된 숙소만 제공
+      • 24시간 문제 해결 지원`,
+      followUp: ['VR 투어 해보기', '숙소 비용은 얼마인가요?', '숙소에 문제가 생기면?']
+    },
+    
+    '만족도가 어떤가요?': {
+      answer: `농촌유학 만족도는 매우 높습니다! ⭐
+      
+      <strong>2024년 통계:</strong>
+      • 전체 만족도: 88.1%
+      • 추천 의향: 85.7%
+      • 참여 학생: 352명 (3년간 300% 증가)
+      
+      <strong>주요 만족 요인:</strong>
+      • 자연친화적 환경
+      • 소규모 학급의 맞춤 교육
+      • 다양한 체험 프로그램
+      • 인성 발달과 자립심 향상`,
+      followUp: ['후기를 보고 싶어요', '어떤 점이 가장 좋은가요?', '문제점은 없나요?']
+    },
+    
+    '문제가 생기면 어떻게 하나요?': {
+      answer: `24시간 종합 지원 시스템으로 든든하게 도와드려요! 🆘
+      
+      <strong>지원 체계:</strong>
+      • 24시간 AI 상담 (지금 이용 중!)
+      • 전문가 화상 상담 예약
+      • 지역별 코디네이터 직접 연결
+      • 응급상황 즉시 대응
+      
+      <strong>주요 지원 분야:</strong>
+      • 적응 문제 상담
+      • 숙소/학교 관련 이슈
+      • 건강/안전 문제
+      • 학습 지원`,
+      followUp: ['전문가 상담 예약하기', '응급상황 연락처', '자주 생기는 문제들']
+    }
+  },
+  
+  // 챗봇 토글
+  toggle() {
+    const chatbotWindow = document.getElementById('chatbotWindow');
+    this.isOpen = !this.isOpen;
+    
+    if (this.isOpen) {
+      chatbotWindow.classList.add('show');
+    } else {
+      chatbotWindow.classList.remove('show');
+    }
+  },
+  
+  // 메시지 추가
+  addMessage(content, isUser = false, hasQuickButtons = false) {
+    const messagesContainer = document.getElementById('chatbotMessages');
+    const messageEl = document.createElement('div');
+    messageEl.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+    
+    const avatarIcon = isUser ? 'fa-user' : 'fa-robot';
+    
+    messageEl.innerHTML = `
+      <div class="message-avatar">
+        <i class="fas ${avatarIcon}"></i>
+      </div>
+      <div class="message-content">
+        ${content}
+      </div>
+    `;
+    
+    messagesContainer.appendChild(messageEl);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    return messageEl;
+  },
+  
+  // 타이핑 인디케이터 표시
+  showTyping() {
+    if (this.isTyping) return;
+    
+    this.isTyping = true;
+    const typingEl = document.createElement('div');
+    typingEl.className = 'message bot-message typing-message';
+    typingEl.innerHTML = `
+      <div class="message-avatar">
+        <i class="fas fa-robot"></i>
+      </div>
+      <div class="typing-indicator">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    `;
+    
+    const messagesContainer = document.getElementById('chatbotMessages');
+    messagesContainer.appendChild(typingEl);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    return typingEl;
+  },
+  
+  // 타이핑 인디케이터 제거
+  hideTyping() {
+    this.isTyping = false;
+    const typingEl = document.querySelector('.typing-message');
+    if (typingEl) {
+      typingEl.remove();
+    }
+  },
+  
+  // AI 응답 생성
+  generateResponse(userMessage) {
+    const message = userMessage.toLowerCase().trim();
+    
+    // FAQ 검색
+    for (const [question, data] of Object.entries(this.faqDatabase)) {
+      if (this.isMessageMatch(message, question)) {
+        return this.formatResponse(data.answer, data.followUp);
+      }
+    }
+    
+    // 키워드 기반 응답
+    if (message.includes('비용') || message.includes('돈') || message.includes('가격')) {
+      return this.formatResponse(
+        `농촌유학 비용에 대해 궁금하시군요! 💰 지역별로 월 25~35만원 정도이며, 교육청 지원금도 있어요.`,
+        ['비용이 얼마나 드나요?', '지원금은 어떻게 받나요?']
+      );
+    }
+    
+    if (message.includes('지역') || message.includes('강원') || message.includes('전남') || message.includes('전북')) {
+      return this.formatResponse(
+        `현재 강원도, 전남, 전북 3개 도에서 농촌유학을 운영하고 있어요! 🗺️ AI 매칭으로 우리 아이에게 딱 맞는 지역을 찾아드릴게요.`,
+        ['AI 매칭 시작하기', '지역별 차이점은?', '어느 지역이 좋나요?']
+      );
+    }
+    
+    if (message.includes('학교') || message.includes('교육')) {
+      return this.formatResponse(
+        `농촌 학교는 소규모로 운영되어 맞춤형 교육이 가능해요! 📚 평균 학급당 15명 내외로 선생님의 세심한 관심을 받을 수 있어요.`,
+        ['학교는 어떤가요?', '교육과정은?', '친구들과 잘 지낼까요?']
+      );
+    }
+    
+    if (message.includes('안전') || message.includes('걱정') || message.includes('문제')) {
+      return this.formatResponse(
+        `안전과 관련해서 걱정이 많으시겠어요. 😊 24시간 지원 시스템과 지역 코디네이터가 항상 도움을 드리고 있으니 안심하세요!`,
+        ['문제가 생기면 어떻게 하나요?', '응급상황 대응', '안전 관리 시스템']
+      );
+    }
+    
+    // 기본 응답
+    return this.formatResponse(
+      `죄송해요, 정확히 이해하지 못했어요. 😅 아래 자주 묻는 질문들을 참고해보시거나, 다른 방식으로 질문해주세요!`,
+      ['농촌유학이 뭔가요?', '비용이 얼마나 드나요?', '신청 방법을 알려주세요']
+    );
+  },
+  
+  // 메시지 매칭 확인
+  isMessageMatch(userMessage, question) {
+    const userWords = userMessage.split(' ');
+    const questionWords = question.toLowerCase().split(' ');
+    
+    let matchCount = 0;
+    for (const word of questionWords) {
+      if (userMessage.includes(word)) {
+        matchCount++;
+      }
+    }
+    
+    return matchCount >= Math.min(2, questionWords.length);
+  },
+  
+  // 응답 포맷팅
+  formatResponse(answer, followUp = []) {
+    let response = `<p>${answer}</p>`;
+    
+    if (followUp.length > 0) {
+      response += `
+        <div class="quick-buttons">
+          ${followUp.map(question => 
+            `<button class="quick-btn" onclick="sendQuickMessage('${question}')">${question}</button>`
+          ).join('')}
+        </div>
+      `;
+    }
+    
+    return response;
+  },
+  
+  // 메시지 전송 처리
+  async sendMessage(userMessage) {
+    if (!userMessage.trim()) return;
+    
+    // 사용자 메시지 추가
+    this.addMessage(`<p>${userMessage}</p>`, true);
+    
+    // 타이핑 인디케이터 표시
+    const typingEl = this.showTyping();
+    
+    // 응답 생성 (실제로는 API 호출)
+    setTimeout(() => {
+      this.hideTyping();
+      const response = this.generateResponse(userMessage);
+      this.addMessage(response);
+    }, 1000 + Math.random() * 1000); // 1-2초 지연
+  }
+};
+
+// 전역 함수들
+function toggleChatbot() {
+  chatbotSystem.toggle();
+}
+
+function sendMessage(event) {
+  event.preventDefault();
+  const input = document.getElementById('chatInput');
+  const message = input.value.trim();
+  
+  if (message) {
+    chatbotSystem.sendMessage(message);
+    input.value = '';
+  }
+}
+
+function sendQuickMessage(message) {
+  chatbotSystem.sendMessage(message);
+}
+
+// 빠른 로그인 기능
+function quickLogin(email, password) {
+  document.getElementById('loginEmail').value = email;
+  document.getElementById('loginPassword').value = password;
+  
+  const result = userSystem.login(email, password);
+  
+  if (result.success) {
+    // 로그인 성공
+    bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+    showToast(`${result.user.name}님, 환영합니다!`, 'success');
+  } else {
+    // 로그인 실패
+    showToast(result.message, 'error');
+  }
 }
